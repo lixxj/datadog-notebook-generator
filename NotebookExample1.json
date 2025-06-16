@@ -1,0 +1,70 @@
+{
+    "data": {
+        "type": "notebooks",
+        "id": 12643952,
+        "attributes": {
+            "name": "Example Notebook",
+            "cells": [
+                {
+                    "type": "notebook_cells",
+                    "id": "1dpy669l",
+                    "attributes": {
+                        "definition": {
+                            "type": "markdown",
+                            "text": "## Some test markdown\n\nWith some example content."
+                        }
+                    }
+                },
+                {
+                    "type": "notebook_cells",
+                    "id": "qnkf3d9z",
+                    "attributes": {
+                        "definition": {
+                            "type": "timeseries",
+                            "requests": [
+                                {
+                                    "display_type": "line",
+                                    "q": "avg:system.load.1{*}",
+                                    "style": {
+                                        "line_type": "solid",
+                                        "line_width": "normal",
+                                        "palette": "dog_classic"
+                                    }
+                                }
+                            ],
+                            "show_legend": true,
+                            "yaxis": {
+                                "scale": "linear"
+                            }
+                        }
+                    }
+                }
+            ],
+            "time": {
+                "live_span": "1h"
+            },
+            "metadata": {
+                "take_snapshots": false,
+                "is_template": false,
+                "is_favorite": false,
+                "type": null
+            },
+            "template_variables": [],
+            "status": "published",
+            "modified": "2025-06-16T03:12:14.879098+00:00",
+            "created": "2025-06-16T03:12:14.879098+00:00",
+            "deleted": null,
+            "tags": null,
+            "author": {
+                "name": "XJ Li",
+                "handle": "xj.li@datadoghq.com",
+                "email": "xj.li@datadoghq.com",
+                "icon": "https://secure.gravatar.com/avatar/8177a5798c7f85813ece030908d55e6b?s=48&d=retro",
+                "title": null,
+                "verified": true,
+                "disabled": false,
+                "status": "Active"
+            }
+        }
+    }
+}

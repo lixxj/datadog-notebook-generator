@@ -1,0 +1,67 @@
+{
+    "data": {
+      "type": "notebooks",
+      "attributes": {
+        "name": "Analysis: CPU usage",
+        "cells": [
+          {
+            "type": "notebook_cells",
+            "id": "97311355",
+            "attributes": {
+              "definition": {
+                "type": "markdown",
+                "text": "# Analysis: CPU usage\n\nThis notebook was generated based on your request: \"CPU usage\"\n\nGenerated on: 2025-06-16 14:42:26"
+              }
+            }
+          },
+          {
+            "type": "notebook_cells",
+            "id": "1f41f917",
+            "attributes": {
+              "definition": {
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "display_type": "line",
+                    "q": "avg:system.cpu.user{*}",
+                    "style": {
+                      "line_type": "solid",
+                      "line_width": "normal",
+                      "palette": "dog_classic"
+                    }
+                  }
+                ],
+                "show_legend": true,
+                "yaxis": {
+                  "scale": "linear"
+                }
+              }
+            }
+          },
+          {
+            "type": "notebook_cells",
+            "id": "670b1ef1",
+            "attributes": {
+              "definition": {
+                "type": "markdown",
+                "text": "## Analysis\n\nThis visualization shows key metrics relevant to your request. You can:\n- Adjust the time range using the time picker\n- Add filters using template variables\n- Modify queries to focus on specific hosts or services"
+              }
+            }
+          }
+        ],
+        "time": {
+          "live_span": "1h"
+        },
+        "metadata": {
+          "take_snapshots": false,
+          "is_template": false,
+          "is_favorite": false,
+          "type": "investigation"
+        },
+        "template_variables": [],
+        "status": "published",
+        "created": "2025-06-16T14:42:26.671789+00:00",
+        "modified": "2025-06-16T14:42:26.671789+00:00"
+      }
+    }
+  }
