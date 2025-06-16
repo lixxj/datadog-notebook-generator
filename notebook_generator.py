@@ -9,12 +9,14 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 import openai
 from openai import OpenAI
+from metrics_loader import MetricsLoader, Metric
 
 
 class NotebookGenerator:
     def __init__(self, api_key: str):
         self.client = OpenAI(api_key=api_key)
         self.example_notebook = self._load_example_notebook()
+        self.metrics_loader = MetricsLoader()
     
     def _load_example_notebook(self) -> Dict[str, Any]:
         """Load the example notebook structure"""
@@ -96,8 +98,22 @@ class NotebookGenerator:
             return self._create_basic_notebook(user_request, author_info)
     
     def _create_prompt(self, user_request: str) -> str:
-        """Create a detailed prompt for the LLM with example notebook structure"""
+        """Create a detailed prompt for the LLM with example notebook structure and real metrics"""
         example_structure = json.dumps(self.example_notebook, indent=2)
+        
+        # Get relevant metrics for the user request
+        suggested_metrics = self.metrics_loader.suggest_metrics_for_request(user_request)
+        
+        # Format metrics for the prompt
+        metrics_info = []
+        for metric in suggested_metrics[:15]:  # Limit to 15 most relevant
+            metrics_info.append(f"- {metric.name}: {metric.description} (Type: {metric.type}, Unit: {metric.unit_name})")
+        
+        metrics_text = "\n".join(metrics_info) if metrics_info else "No specific metrics found, use general system metrics."
+        
+        # Get integration summary
+        integrations = self.metrics_loader.get_available_integrations()
+        integrations_text = ", ".join(integrations)
         
         return f"""
 You are an expert Datadog notebook creator. Create a complete Datadog notebook JSON structure based on this user request: "{user_request}"
@@ -105,6 +121,11 @@ You are an expert Datadog notebook creator. Create a complete Datadog notebook J
 Here is an example of the exact JSON structure that Datadog expects:
 
 {example_structure}
+
+AVAILABLE REAL METRICS FOR THIS REQUEST:
+{metrics_text}
+
+AVAILABLE INTEGRATIONS: {integrations_text}
 
 IMPORTANT: You must return a complete, valid JSON structure that follows this exact format.
 
@@ -124,23 +145,18 @@ TIMESERIES CELLS: Use for metric visualizations
 - Set type: "timeseries"
 - Include "requests" array with queries
 - Each request needs: display_type, q (query), style
-- Choose appropriate metrics based on request:
-  * CPU/Load: system.cpu.user, system.load.1, system.load.5
-  * Memory: system.memory.used, system.memory.free, system.memory.usable
-  * Disk: system.disk.used, system.disk.free, system.io.*
-  * Network: system.net.bytes_sent, system.net.bytes_rcvd
-  * Application: trace.*, apm.*, custom application metrics
-  * Database: mysql.*, postgresql.*, mongodb.*
-  * Web servers: nginx.*, apache.*
+- USE THE REAL METRICS PROVIDED ABOVE - choose the most relevant ones for the request
+- Format queries as: "avg:metric_name" or "sum:metric_name" etc.
 
 QUERY_VALUE CELLS: Use for single metric displays, KPIs
 - Set type: "query_value" 
 - Include single metric query for current value
+- Use real metrics from the list above
 
 Choose an appropriate time range in "time.live_span":
 - "5m", "15m", "1h", "4h", "1d", "2d", "1w" based on the use case
 
-Generate a complete, valid JSON response that directly addresses the user's request with relevant metrics and useful visualizations. Make sure all cell IDs are unique.
+Generate a complete, valid JSON response that directly addresses the user's request with the REAL METRICS provided above. Make sure all cell IDs are unique and use actual metric names from the available metrics list.
 """
     
     def _extract_cells_from_response(self, llm_response: str, user_request: str) -> List[Dict[str, Any]]:
@@ -203,23 +219,20 @@ Generate a complete, valid JSON response that directly addresses the user's requ
         return cells
     
     def _generate_metric_query(self, user_request: str) -> str:
-        """Generate appropriate metric query based on user request"""
-        request_lower = user_request.lower()
+        """Generate appropriate metric query based on user request using real metrics"""
+        suggested_metrics = self.metrics_loader.suggest_metrics_for_request(user_request)
         
-        if any(word in request_lower for word in ['cpu', 'processor', 'load']):
-            return "avg:system.cpu.user{*}"
-        elif any(word in request_lower for word in ['memory', 'ram', 'mem']):
-            return "avg:system.mem.used{*}"
-        elif any(word in request_lower for word in ['disk', 'storage', 'io']):
-            return "avg:system.disk.used{*}"
-        elif any(word in request_lower for word in ['network', 'net', 'bandwidth']):
-            return "avg:system.net.bytes_rcvd{*}"
-        elif any(word in request_lower for word in ['application', 'app', 'response']):
-            return "avg:application.response.time{*}"
-        elif any(word in request_lower for word in ['error', 'exception', 'failure']):
-            return "sum:application.errors{*}"
+        if suggested_metrics:
+            # Use the first suggested metric
+            metric = suggested_metrics[0]
+            return self.metrics_loader.format_metric_for_query(metric, "avg", ["*"])
         else:
-            return "avg:system.load.1{*}"
+            # Fallback to popular metrics
+            popular_metrics = self.metrics_loader.get_popular_metrics(1)
+            if popular_metrics:
+                return self.metrics_loader.format_metric_for_query(popular_metrics[0], "avg", ["*"])
+            else:
+                return "avg:system.cpu.user{*}"  # Ultimate fallback
     
     def _generate_title(self, user_request: str) -> str:
         """Generate appropriate title based on user request"""
@@ -364,4 +377,22 @@ Generate a complete, valid JSON response that directly addresses the user's requ
             
             return preview
         except Exception as e:
-            return f"Error generating preview: {str(e)}" 
+            return f"Error generating preview: {str(e)}"
+    
+    def get_metrics_info(self) -> Dict[str, Any]:
+        """Get information about available metrics for the UI"""
+        return self.metrics_loader.get_metrics_summary()
+    
+    def get_suggested_metrics(self, user_request: str) -> List[Dict[str, Any]]:
+        """Get suggested metrics for a user request (for UI display)"""
+        metrics = self.metrics_loader.suggest_metrics_for_request(user_request)
+        return [
+            {
+                "name": metric.name,
+                "description": metric.description,
+                "type": metric.type,
+                "unit": metric.unit_name,
+                "integration": metric.integration
+            }
+            for metric in metrics[:10]  # Limit for UI
+        ] 

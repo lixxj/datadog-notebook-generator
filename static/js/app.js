@@ -9,6 +9,10 @@ const resultsSection = document.getElementById('resultsSection');
 const loadingOverlay = document.getElementById('loadingOverlay');
 const statusIndicator = document.getElementById('statusIndicator');
 
+// Side navigation elements
+const sideNav = document.getElementById('sideNav');
+const sideNavToggle = document.getElementById('sideNavToggle');
+
 // Tab elements
 const previewTab = document.getElementById('previewTab');
 const jsonTab = document.getElementById('jsonTab');
@@ -24,6 +28,120 @@ const successMessage = document.getElementById('successMessage');
 const errorMessage = document.getElementById('errorMessage');
 const successDetails = document.getElementById('successDetails');
 const errorDetails = document.getElementById('errorDetails');
+
+// Side Navigation Functions
+function initializeSideNavigation() {
+    // Set up toggle functionality
+    if (sideNavToggle) {
+        sideNavToggle.addEventListener('click', toggleSideNavigation);
+    }
+    
+    // Add tooltips for collapsed state
+    addNavigationTooltips();
+    
+    // Handle mobile responsiveness
+    handleMobileNavigation();
+    
+    // Set up keyboard shortcuts for navigation
+    setupNavigationKeyboardShortcuts();
+}
+
+function toggleSideNavigation() {
+    if (sideNav) {
+        sideNav.classList.toggle('collapsed');
+        
+        // Save preference to localStorage
+        const isCollapsed = sideNav.classList.contains('collapsed');
+        localStorage.setItem('sideNavCollapsed', isCollapsed);
+    }
+}
+
+function addNavigationTooltips() {
+    const navItems = document.querySelectorAll('.side-nav-item');
+    navItems.forEach(item => {
+        const textElement = item.querySelector('.side-nav-text');
+        if (textElement) {
+            item.setAttribute('data-tooltip', textElement.textContent);
+        }
+    });
+}
+
+function handleMobileNavigation() {
+    // Check if mobile
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        // Add mobile menu button to header if not exists
+        addMobileMenuButton();
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        const newIsMobile = window.innerWidth <= 768;
+        if (newIsMobile !== isMobile) {
+            if (newIsMobile) {
+                addMobileMenuButton();
+            } else {
+                removeMobileMenuButton();
+                sideNav.classList.remove('mobile-open');
+            }
+        }
+    });
+}
+
+function addMobileMenuButton() {
+    const header = document.querySelector('.header-content');
+    if (header && !header.querySelector('.mobile-menu-btn')) {
+        const menuBtn = document.createElement('button');
+        menuBtn.className = 'mobile-menu-btn';
+        menuBtn.innerHTML = '☰';
+        menuBtn.style.cssText = `
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-right: 1rem;
+        `;
+        
+        menuBtn.addEventListener('click', () => {
+            sideNav.classList.toggle('mobile-open');
+        });
+        
+        header.insertBefore(menuBtn, header.firstChild);
+    }
+}
+
+function removeMobileMenuButton() {
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    if (menuBtn) {
+        menuBtn.remove();
+    }
+}
+
+function setupNavigationKeyboardShortcuts() {
+    document.addEventListener('keydown', (event) => {
+        // Ctrl/Cmd + B to toggle sidebar
+        if ((event.ctrlKey || event.metaKey) && event.key === 'b') {
+            event.preventDefault();
+            toggleSideNavigation();
+        }
+        
+        // Escape to close mobile menu
+        if (event.key === 'Escape' && sideNav.classList.contains('mobile-open')) {
+            sideNav.classList.remove('mobile-open');
+        }
+    });
+}
+
+function restoreSideNavigationState() {
+    // Restore collapsed state from localStorage
+    const isCollapsed = localStorage.getItem('sideNavCollapsed') === 'true';
+    if (isCollapsed && sideNav) {
+        sideNav.classList.add('collapsed');
+    }
+}
 
 // Example data
 const examples = {
@@ -52,8 +170,11 @@ const examples = {
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
+    initializeSideNavigation();
     setupEventListeners();
     checkSystemStatus();
+    loadMetricsInfo();
+    restoreSideNavigationState();
 });
 
 function initializeApp() {
@@ -78,23 +199,142 @@ function setupEventListeners() {
         notebookForm.addEventListener('submit', handleFormSubmission);
     }
     
-    // Example cards
+    // Example cards - Updated to work with new examples
     const exampleCards = document.querySelectorAll('.example-card');
     exampleCards.forEach(card => {
         card.addEventListener('click', function() {
-            const exampleType = this.getAttribute('onclick').match(/'(.+)'/)[1];
-            fillExample(exampleType);
+            // Get the example type from the onclick attribute or data attribute
+            const onclickAttr = this.getAttribute('onclick');
+            if (onclickAttr) {
+                const match = onclickAttr.match(/'(.+)'/);
+                if (match) {
+                    fillExample(match[1]);
+                }
+            }
         });
     });
+    
+    // Side navigation links
+    setupSideNavigationLinks();
     
     // Auto-resize textarea
     const textarea = document.getElementById('description');
     if (textarea) {
         textarea.addEventListener('input', autoResizeTextarea);
+        textarea.addEventListener('input', debounce(handleDescriptionChange, 500));
     }
     
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboardShortcuts);
+}
+
+function setupSideNavigationLinks() {
+    // Add click handlers for side navigation items
+    const sideNavItems = document.querySelectorAll('.side-nav-item');
+    
+    sideNavItems.forEach(item => {
+        const link = item.querySelector('.side-nav-link');
+        const text = item.querySelector('.side-nav-text');
+        
+        if (link && text) {
+            const linkText = text.textContent.trim();
+            
+            // Add click handler based on the navigation item
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                handleSideNavClick(linkText, item);
+            });
+            
+            // Add cursor pointer
+            link.style.cursor = 'pointer';
+        }
+    });
+}
+
+function handleSideNavClick(linkText, item) {
+    // Remove active class from all items
+    document.querySelectorAll('.side-nav-item').forEach(navItem => {
+        navItem.classList.remove('active');
+    });
+    
+    // Add active class to clicked item
+    item.classList.add('active');
+    
+    // Handle different navigation items
+    switch (linkText) {
+        case 'Go to...':
+            // Simulate command palette (could implement search functionality)
+            alert('⌘K - Command palette functionality would go here');
+            break;
+            
+        case 'Dashboards':
+            window.open('https://app.datadoghq.com/dashboard/lists', '_blank');
+            break;
+            
+        case 'Notebooks':
+            window.open('https://app.datadoghq.com/notebook/list', '_blank');
+            break;
+            
+        case 'Metrics':
+            window.open('https://app.datadoghq.com/metric/explorer', '_blank');
+            break;
+            
+        case 'Infrastructure':
+            window.open('https://app.datadoghq.com/infrastructure', '_blank');
+            break;
+            
+        case 'APM':
+            window.open('https://app.datadoghq.com/apm/home', '_blank');
+            break;
+            
+        case 'Logs':
+            window.open('https://app.datadoghq.com/logs', '_blank');
+            break;
+            
+        case 'Security':
+            window.open('https://app.datadoghq.com/security', '_blank');
+            break;
+            
+        case 'Synthetics':
+            window.open('https://app.datadoghq.com/synthetics/list', '_blank');
+            break;
+            
+        case 'RUM':
+            window.open('https://app.datadoghq.com/rum/list', '_blank');
+            break;
+            
+        case 'CI/CD':
+            window.open('https://app.datadoghq.com/ci', '_blank');
+            break;
+            
+        case 'System Overview':
+            window.open('https://app.datadoghq.com/dashboard/lists', '_blank');
+            break;
+            
+        case 'Performance Analysis':
+            window.open('https://app.datadoghq.com/notebook/list', '_blank');
+            break;
+            
+        case 'Host Map':
+            window.open('https://app.datadoghq.com/infrastructure/map', '_blank');
+            break;
+            
+        case 'Settings':
+            window.open('https://app.datadoghq.com/organization-settings', '_blank');
+            break;
+            
+        case 'Help':
+            window.open('https://docs.datadoghq.com/', '_blank');
+            break;
+            
+        default:
+            console.log(`Navigation clicked: ${linkText}`);
+    }
+    
+    // Close mobile menu if open
+    if (window.innerWidth <= 768) {
+        sideNav.classList.remove('mobile-open');
+    }
 }
 
 async function checkSystemStatus() {
@@ -455,6 +695,149 @@ window.copyToClipboard = copyToClipboard;
 
 // Periodic status check
 setInterval(checkSystemStatus, 30000); // Check every 30 seconds
+
+// Metrics functionality
+async function loadMetricsInfo() {
+    try {
+        const response = await fetch('/metrics/info');
+        const metricsInfo = await response.json();
+        
+        updateMetricsDisplay(metricsInfo);
+    } catch (error) {
+        console.error('Failed to load metrics info:', error);
+        updateMetricsDisplay(null);
+    }
+}
+
+function updateMetricsDisplay(metricsInfo) {
+    const totalMetricsEl = document.getElementById('totalMetrics');
+    const totalIntegrationsEl = document.getElementById('totalIntegrations');
+    const integrationsListEl = document.getElementById('integrationsList');
+    
+    if (metricsInfo) {
+        totalMetricsEl.textContent = metricsInfo.total_metrics.toLocaleString();
+        totalIntegrationsEl.textContent = metricsInfo.integrations;
+        
+        const integrations = Object.keys(metricsInfo.integration_breakdown);
+        integrationsListEl.textContent = integrations.map(name => 
+            name.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
+        ).join(', ');
+    } else {
+        totalMetricsEl.textContent = 'Error';
+        totalIntegrationsEl.textContent = 'Error';
+        integrationsListEl.textContent = 'Failed to load metrics information';
+    }
+}
+
+async function handleDescriptionChange() {
+    const description = document.getElementById('description').value.trim();
+    const suggestedMetricsEl = document.getElementById('suggestedMetrics');
+    const metricsListEl = document.getElementById('metricsList');
+    
+    if (description.length < 10) {
+        suggestedMetricsEl.style.display = 'none';
+        return;
+    }
+    
+    try {
+        const response = await fetch('/metrics/suggest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ description: description })
+        });
+        
+        const result = await response.json();
+        
+        if (result.suggested_metrics && result.suggested_metrics.length > 0) {
+            displaySuggestedMetrics(result.suggested_metrics);
+            suggestedMetricsEl.style.display = 'block';
+        } else {
+            suggestedMetricsEl.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Failed to get suggested metrics:', error);
+        suggestedMetricsEl.style.display = 'none';
+    }
+}
+
+function displaySuggestedMetrics(metrics) {
+    const metricsListEl = document.getElementById('metricsList');
+    
+    metricsListEl.innerHTML = metrics.map(metric => `
+        <div class="metric-item">
+            <div class="metric-name">${metric.name}</div>
+            <div class="metric-description">${metric.description}</div>
+            <div class="metric-meta">
+                <span class="metric-type">Type: ${metric.type}</span>
+                ${metric.unit ? `<span class="metric-unit">Unit: ${metric.unit}</span>` : ''}
+                <span class="metric-integration">Source: ${metric.integration.replace('_', ' ')}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Utility function for debouncing
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Helper functions for footer links
+function showAbout() {
+    const aboutMessage = `
+🚀 Datadog Notebook Generator
+
+This application helps you create comprehensive Datadog notebooks using AI. 
+Simply describe what you want to monitor, and our AI will generate a complete 
+notebook with relevant metrics, visualizations, and analysis.
+
+Features:
+• 319+ real Datadog metrics from 6 integrations
+• AI-powered notebook generation
+• Direct Datadog integration
+• Professional monitoring templates
+• Real-time metric suggestions
+
+Built with ❤️ for better monitoring and observability.
+    `;
+    
+    alert(aboutMessage);
+}
+
+function showHelp() {
+    const helpMessage = `
+📚 Help & Tips
+
+Getting Started:
+1. Describe your monitoring needs in detail
+2. Include specific metrics, timeframes, and use cases
+3. Optionally provide your name and email
+4. Choose whether to create directly in Datadog
+
+Tips for Better Results:
+• Be specific about what you want to monitor
+• Mention timeframes (e.g., "last 24 hours")
+• Include context about your infrastructure
+• Specify if you need alerts or thresholds
+
+Keyboard Shortcuts:
+• Ctrl/Cmd + B: Toggle sidebar
+• Escape: Close mobile menu
+
+Need more help? Visit the Datadog documentation or contact support.
+    `;
+    
+    alert(helpMessage);
+}
 
 // Add some helpful console messages
 console.log('🐕 Datadog Notebook Generator');

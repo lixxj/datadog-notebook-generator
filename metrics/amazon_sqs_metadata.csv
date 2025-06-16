@@ -1,0 +1,10 @@
+metric_name,metric_type,interval,unit_name,per_unit_name,description,orientation,integration,short_name,curated_metric
+aws.sqs.approximate_age_of_oldest_message,gauge,,second,,The approximate age of the oldest non-deleted message in the queue.,0,amazon_sqs,oldest non del,
+aws.sqs.approximate_number_of_messages_delayed,gauge,,message,,The number of messages in the queue that are delayed and not available for reading immediately. This can happen when the queue is configured as a delay queue or when a message has been sent with a delay parameter.,-1,amazon_sqs,approx num msgs delayed,
+aws.sqs.approximate_number_of_messages_not_visible,gauge,,message,,The number of messages that are in flight. Messages are considered in flight if they have been sent to a client but have not yet been deleted or have not yet reached the end of their visibility window.,0,amazon_sqs,approx num msgs not visible,
+aws.sqs.approximate_number_of_messages_visible,gauge,,message,,The number of messages available for retrieval from the queue.,0,amazon_sqs,approx num msgs visible,
+aws.sqs.number_of_empty_receives,count,60,message,,The number of ReceiveMessage API calls that did not return a message.,-1,amazon_sqs,num empty responses,
+aws.sqs.number_of_messages_deleted,count,60,message,,The number of messages deleted from the queue.,0,amazon_sqs,num deleted,
+aws.sqs.number_of_messages_received,count,60,message,,The number of messages returned by calls to the ReceiveMessage API action.,0,amazon_sqs,num received,
+aws.sqs.number_of_messages_sent,count,60,message,,The number of messages added to a queue.,0,amazon_sqs,num sent,
+aws.sqs.sent_message_size,gauge,,byte,,The size of messages added to a queue.,0,amazon_sqs,sent msg size,

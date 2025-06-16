@@ -199,6 +199,27 @@ async def validate_notebook(notebook_data: Dict[str, Any]):
     validation = datadog_client.validate_notebook_structure(notebook_data)
     return validation
 
+@app.get("/metrics/info")
+async def get_metrics_info():
+    """Get information about available metrics"""
+    if not notebook_generator:
+        raise HTTPException(status_code=500, detail="Notebook generator not initialized")
+    
+    return notebook_generator.get_metrics_info()
+
+@app.post("/metrics/suggest")
+async def suggest_metrics(request: Dict[str, str]):
+    """Get suggested metrics for a user request"""
+    if not notebook_generator:
+        raise HTTPException(status_code=500, detail="Notebook generator not initialized")
+    
+    user_request = request.get("description", "")
+    if not user_request:
+        raise HTTPException(status_code=400, detail="Description is required")
+    
+    suggested_metrics = notebook_generator.get_suggested_metrics(user_request)
+    return {"suggested_metrics": suggested_metrics}
+
 # Run the application
 if __name__ == "__main__":
     import uvicorn

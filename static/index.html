@@ -5,223 +5,382 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Datadog Notebook Generator</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐕</text></svg>">
+    <link rel="icon" href="/static/images/datadog-logo.png">
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <span class="logo-icon">🐕</span>
-                    <h1>Datadog Notebook Generator</h1>
+        <!-- Side Navigation Panel -->
+        <nav class="side-nav" id="sideNav">
+            <div class="side-nav-header">
+                <div class="side-nav-logo">
+                    <img src="/static/images/datadog-logo.png" alt="Datadog" class="side-nav-logo-icon">
+                    <span class="side-nav-logo-text">Datadog</span>
                 </div>
-                <div class="header-info">
-                    <span class="status-indicator" id="statusIndicator">
-                        <span class="status-dot"></span>
-                        <span class="status-text">Checking...</span>
-                    </span>
+                <button class="side-nav-toggle" id="sideNavToggle">
+                    <span class="toggle-icon">‹</span>
+                </button>
+            </div>
+            
+            <div class="side-nav-content">
+                <!-- Search -->
+                <div class="side-nav-item">
+                    <div class="side-nav-link">
+                        <span class="side-nav-icon">🔍</span>
+                        <span class="side-nav-text">Go to...</span>
+                        <span class="side-nav-shortcut">⌘K</span>
+                    </div>
+                </div>
+                
+                <div class="side-nav-divider"></div>
+                
+                <!-- Main Navigation -->
+                <div class="side-nav-section">
+                    <div class="side-nav-item active">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">📊</span>
+                            <span class="side-nav-text">Dashboards</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">📓</span>
+                            <span class="side-nav-text">Notebooks</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">📈</span>
+                            <span class="side-nav-text">Metrics</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">🖥️</span>
+                            <span class="side-nav-text">Infrastructure</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">🔍</span>
+                            <span class="side-nav-text">APM</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">📝</span>
+                            <span class="side-nav-text">Logs</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">🔒</span>
+                            <span class="side-nav-text">Security</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">🤖</span>
+                            <span class="side-nav-text">Synthetics</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">📱</span>
+                            <span class="side-nav-text">RUM</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">🔧</span>
+                            <span class="side-nav-text">CI/CD</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="side-nav-divider"></div>
+                
+                <!-- Recent Section -->
+                <div class="side-nav-section">
+                    <div class="side-nav-section-title">Recent</div>
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">📊</span>
+                            <span class="side-nav-text">System Overview</span>
+                        </div>
+                    </div>
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">📓</span>
+                            <span class="side-nav-text">Performance Analysis</span>
+                        </div>
+                    </div>
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">🖥️</span>
+                            <span class="side-nav-text">Host Map</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Welcome Section -->
-            <section class="welcome-section">
-                <h2>Generate AI-Powered Datadog Notebooks</h2>
-                <p>Transform your monitoring requirements into comprehensive Datadog notebooks using advanced AI. Perfect for support cases, metric demonstrations, escalations, and rapid prototyping.</p>
-            </section>
-
-            <!-- Generator Form -->
-            <section class="generator-section">
-                <div class="form-container">
-                    <form id="notebookForm" class="notebook-form">
-                        <div class="form-group">
-                            <label for="description" class="form-label">
-                                <span class="label-text">Describe Your Notebook</span>
-                                <span class="label-hint">Be specific about what metrics, timeframes, and analysis you need</span>
-                            </label>
-                            <textarea 
-                                id="description" 
-                                name="description" 
-                                class="form-textarea"
-                                placeholder="Example: Show CPU and memory usage patterns for web servers over the last 24 hours, including error rates and response times to help troubleshoot performance issues..."
-                                required
-                                rows="4"
-                            ></textarea>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="authorName" class="form-label">
-                                    <span class="label-text">Your Name</span>
-                                    <span class="optional">(optional)</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="authorName" 
-                                    name="authorName" 
-                                    class="form-input"
-                                    placeholder="Your name"
-                                >
-                            </div>
-
-                            <div class="form-group">
-                                <label for="authorEmail" class="form-label">
-                                    <span class="label-text">Your Email</span>
-                                    <span class="optional">(optional)</span>
-                                </label>
-                                <input 
-                                    type="email" 
-                                    id="authorEmail" 
-                                    name="authorEmail" 
-                                    class="form-input"
-                                    placeholder="your.email@company.com"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="createInDatadog" name="createInDatadog" class="form-checkbox">
-                                <label for="createInDatadog" class="checkbox-label">
-                                    <span class="checkbox-text">Create notebook directly in Datadog</span>
-                                    <span class="checkbox-hint">Requires valid Datadog API credentials</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary" id="generateBtn">
-                                <span class="btn-icon">🚀</span>
-                                Generate Notebook
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="clearForm()">
-                                <span class="btn-icon">🔄</span>
-                                Clear Form
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Results Section -->
-            <section class="results-section" id="resultsSection" style="display: none;">
-                <div class="results-container">
-                    <div class="results-header">
-                        <h3>Generated Notebook</h3>
-                        <div class="results-actions">
-                            <button class="btn btn-small btn-outline" onclick="downloadJSON()">
-                                <span class="btn-icon">📥</span>
-                                Download JSON
-                            </button>
-                            <button class="btn btn-small btn-outline" onclick="copyToClipboard()">
-                                <span class="btn-icon">📋</span>
-                                Copy JSON
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="results-content">
-                        <!-- Preview Tab -->
-                        <div class="tab-container">
-                            <div class="tab-nav">
-                                <button class="tab-btn active" onclick="showTab('preview')">📊 Preview</button>
-                                <button class="tab-btn" onclick="showTab('json')">📄 JSON</button>
-                                <button class="tab-btn" onclick="showTab('details')">ℹ️ Details</button>
-                            </div>
-
-                            <div class="tab-content">
-                                <div id="previewTab" class="tab-pane active">
-                                    <div class="preview-content" id="previewContent">
-                                        <!-- Preview content will be inserted here -->
-                                    </div>
-                                </div>
-
-                                <div id="jsonTab" class="tab-pane">
-                                    <div class="json-container">
-                                        <pre id="jsonContent" class="json-content"></pre>
-                                    </div>
-                                </div>
-
-                                <div id="detailsTab" class="tab-pane">
-                                    <div class="details-content" id="detailsContent">
-                                        <!-- Details content will be inserted here -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Success/Error Messages -->
-                        <div id="successMessage" class="message success" style="display: none;">
-                            <div class="message-icon">🎉</div>
-                            <div class="message-content">
-                                <strong>Notebook created successfully!</strong>
-                                <p id="successDetails"></p>
-                            </div>
-                        </div>
-
-                        <div id="errorMessage" class="message error" style="display: none;">
-                            <div class="message-icon">❌</div>
-                            <div class="message-content">
-                                <strong>Error occurred</strong>
-                                <p id="errorDetails"></p>
-                            </div>
-                        </div>
+            
+            <div class="side-nav-footer">
+                <div class="side-nav-item">
+                    <div class="side-nav-link">
+                        <span class="side-nav-icon">⚙️</span>
+                        <span class="side-nav-text">Settings</span>
                     </div>
                 </div>
-            </section>
-
-            <!-- Examples Section -->
-            <section class="examples-section">
-                <h3>Example Use Cases</h3>
-                <div class="examples-grid">
-                    <div class="example-card" onclick="fillExample('support')">
-                        <div class="example-icon">🛠️</div>
-                        <h4>Support Case</h4>
-                        <p>Investigate high memory usage on web servers causing timeouts and slow response times</p>
+                <div class="side-nav-item">
+                    <div class="side-nav-link">
+                        <span class="side-nav-icon">❓</span>
+                        <span class="side-nav-text">Help</span>
                     </div>
-
-                    <div class="example-card" onclick="fillExample('demo')">
-                        <div class="example-icon">📈</div>
-                        <h4>Metric Demo</h4>
-                        <p>Demonstrate metric rollup functions with different time windows and aggregation methods</p>
-                    </div>
-
-                    <div class="example-card" onclick="fillExample('escalation')">
-                        <div class="example-icon">🚨</div>
-                        <h4>Escalation</h4>
-                        <p>Comprehensive analysis of database performance degradation affecting multiple services</p>
-                    </div>
-
-                    <div class="example-card" onclick="fillExample('prototype')">
-                        <div class="example-icon">⚡</div>
-                        <h4>Prototyping</h4>
-                        <p>Quick monitoring setup for new microservice deployment with key performance indicators</p>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-content">
-                <p>&copy; 2024 Datadog Notebook Generator | Built with ❤️ for better monitoring</p>
-                <div class="footer-links">
-                    <a href="/health" target="_blank">Health Check</a>
-                    <a href="/notebooks" target="_blank">View Notebooks</a>
                 </div>
             </div>
-        </footer>
+        </nav>
+
+        <!-- Main App Content -->
+        <div class="main-app-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-content">
+                    <div class="logo">
+                        <img src="/static/images/datadog-logo.png" alt="Datadog" class="logo-icon">
+                        <h1>Datadog Notebook Generator</h1>
+                    </div>
+                    <div class="header-info">
+                        <span class="status-indicator" id="statusIndicator">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Checking...</span>
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Welcome Section -->
+                <section class="welcome-section">
+                    <h2>Generate AI-Powered Datadog Notebooks</h2>
+                    <p>Transform your monitoring requirements into comprehensive Datadog notebooks using advanced AI. Perfect for support cases, metric demonstrations, escalations, and rapid prototyping.</p>
+                </section>
+
+                <!-- Metrics Info Section -->
+                <section class="metrics-info-section">
+                    <div class="metrics-info-container">
+                        <div class="metrics-summary" id="metricsSummary">
+                            <div class="metrics-stat">
+                                <span class="stat-number" id="totalMetrics">-</span>
+                                <span class="stat-label">Real Metrics Available</span>
+                            </div>
+                            <div class="metrics-stat">
+                                <span class="stat-number" id="totalIntegrations">-</span>
+                                <span class="stat-label">Integrations</span>
+                            </div>
+                            <div class="metrics-integrations" id="integrationsDisplay">
+                                <span class="integrations-label">Available:</span>
+                                <span class="integrations-list" id="integrationsList">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="suggested-metrics" id="suggestedMetrics" style="display: none;">
+                            <h4>Suggested Metrics for Your Request:</h4>
+                            <div class="metrics-list" id="metricsList"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Generator Form -->
+                <section class="generator-section">
+                    <div class="form-container">
+                        <form id="notebookForm" class="notebook-form">
+                            <div class="form-group">
+                                <label for="description" class="form-label">
+                                    <span class="label-text">Describe Your Notebook</span>
+                                    <span class="label-hint">Be specific about what metrics, timeframes, and analysis you need</span>
+                                </label>
+                                <textarea 
+                                    id="description" 
+                                    name="description" 
+                                    class="form-textarea"
+                                    placeholder="Example: Show CPU and memory usage patterns for web servers over the last 24 hours, including error rates and response times to help troubleshoot performance issues..."
+                                    required
+                                    rows="4"
+                                ></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="authorName" class="form-label">
+                                        <span class="label-text">Your Name</span>
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="authorName" 
+                                        name="authorName" 
+                                        class="form-input"
+                                        placeholder="Your name"
+                                    >
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="authorEmail" class="form-label">
+                                        <span class="label-text">Your Email</span>
+                                        <span class="optional">(optional)</span>
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        id="authorEmail" 
+                                        name="authorEmail" 
+                                        class="form-input"
+                                        placeholder="your.email@company.com"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="createInDatadog" name="createInDatadog" class="form-checkbox">
+                                    <label for="createInDatadog" class="checkbox-label">
+                                        <span class="checkbox-text">Create notebook directly in Datadog</span>
+                                        <span class="checkbox-hint">Requires valid Datadog API credentials</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" id="generateBtn">
+                                    <span class="btn-icon">🚀</span>
+                                    Generate Notebook
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                                    <span class="btn-icon">🔄</span>
+                                    Clear Form
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Results Section -->
+                <section class="results-section" id="resultsSection" style="display: none;">
+                    <div class="results-container">
+                        <div class="results-header">
+                            <h3>Generated Notebook</h3>
+                            <div class="results-actions">
+                                <button class="btn btn-small btn-outline" onclick="downloadJSON()">
+                                    <span class="btn-icon">📥</span>
+                                    Download JSON
+                                </button>
+                                <button class="btn btn-small btn-outline" onclick="copyToClipboard()">
+                                    <span class="btn-icon">📋</span>
+                                    Copy JSON
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="results-content">
+                            <!-- Preview Tab -->
+                            <div class="tab-container">
+                                <div class="tab-nav">
+                                    <button class="tab-btn active" onclick="showTab('preview')">📊 Preview</button>
+                                    <button class="tab-btn" onclick="showTab('json')">📄 JSON</button>
+                                    <button class="tab-btn" onclick="showTab('details')">ℹ️ Details</button>
+                                </div>
+
+                                <div class="tab-content">
+                                    <div id="previewTab" class="tab-pane active">
+                                        <div class="preview-content" id="previewContent">
+                                            <!-- Preview content will be inserted here -->
+                                        </div>
+                                    </div>
+
+                                    <div id="jsonTab" class="tab-pane">
+                                        <div class="json-container">
+                                            <pre id="jsonContent" class="json-content"></pre>
+                                        </div>
+                                    </div>
+
+                                    <div id="detailsTab" class="tab-pane">
+                                        <div class="details-content" id="detailsContent">
+                                            <!-- Details content will be inserted here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Success/Error Messages -->
+                            <div id="successMessage" class="message success" style="display: none;">
+                                <div class="message-icon">🎉</div>
+                                <div class="message-content">
+                                    <strong>Notebook created successfully!</strong>
+                                    <p id="successDetails"></p>
+                                </div>
+                            </div>
+
+                            <div id="errorMessage" class="message error" style="display: none;">
+                                <div class="message-icon">❌</div>
+                                <div class="message-content">
+                                    <strong>Error occurred</strong>
+                                    <p id="errorDetails"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Examples Section -->
+                <section class="examples-section">
+                    <h3>Example Use Cases</h3>
+                    <div class="examples-grid">
+                        <div class="example-card" onclick="fillExample('performance')">
+                            <div class="example-icon">⚡</div>
+                            <h4>Performance Analysis</h4>
+                            <p>Monitor application performance, response times, and resource utilization</p>
+                        </div>
+                        <div class="example-card" onclick="fillExample('troubleshooting')">
+                            <div class="example-icon">🔧</div>
+                            <h4>Troubleshooting Guide</h4>
+                            <p>Create diagnostic notebooks for incident response and debugging</p>
+                        </div>
+                        <div class="example-card" onclick="fillExample('capacity')">
+                            <div class="example-icon">📊</div>
+                            <h4>Capacity Planning</h4>
+                            <p>Analyze trends and forecast resource needs for scaling decisions</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-content">
+                    <p>&copy; 2024 Datadog Notebook Generator. Built with ❤️ for better monitoring.</p>
+                    <div class="footer-links">
+                        <a href="#" onclick="showAbout()">About</a>
+                        <a href="#" onclick="showHelp()">Help</a>
+                        <a href="https://docs.datadoghq.com/notebooks/" target="_blank">Datadog Docs</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <h3>Generating your notebook...</h3>
-            <p>This may take a few seconds</p>
+            <h3>Generating Your Notebook</h3>
+            <p>Our AI is crafting the perfect monitoring solution for you...</p>
         </div>
     </div>
 
