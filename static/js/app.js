@@ -200,6 +200,12 @@ function setupEventListeners() {
         notebookForm.addEventListener('submit', handleFormSubmission);
     }
     
+    // Mode selection change
+    const modeRadios = document.querySelectorAll('input[name="generationMode"]');
+    modeRadios.forEach(radio => {
+        radio.addEventListener('change', handleModeChange);
+    });
+    
     // Example cards - Updated to work with new examples
     const exampleCards = document.querySelectorAll('.example-card');
     exampleCards.forEach(card => {
@@ -369,80 +375,115 @@ function updateStatusIndicator(status) {
     }
 }
 
+function handleModeChange() {
+    const selectedMode = document.querySelector('input[name="generationMode"]:checked').value;
+    const descriptionLabel = document.getElementById('descriptionLabel');
+    const descriptionHint = document.getElementById('descriptionHint');
+    const createInDatadogText = document.getElementById('createInDatadogText');
+    const generateBtnText = document.getElementById('generateBtnText');
+    
+    if (selectedMode === 'dashboard') {
+        descriptionLabel.textContent = 'Describe Your Dashboard';
+        descriptionHint.textContent = 'Be specific about what widgets, metrics, and visualizations you need';
+        createInDatadogText.textContent = 'Create dashboard directly in Datadog';
+        generateBtnText.textContent = 'Generate Dashboard';
+    } else {
+        descriptionLabel.textContent = 'Describe Your Notebook';
+        descriptionHint.textContent = 'Be specific about what metrics, timeframes, and analysis you need';
+        createInDatadogText.textContent = 'Create notebook directly in Datadog';
+        generateBtnText.textContent = 'Generate Notebook';
+    }
+}
+
 async function handleFormSubmission(event) {
     event.preventDefault();
     
-    const formData = new FormData(event.target);
+    const formData = new FormData(notebookForm);
+    const selectedMode = document.querySelector('input[name="generationMode"]:checked').value;
+    
     const requestData = {
         description: formData.get('description'),
-        metric_names: formData.get('metricNames'),
-        timeframes: formData.get('timeframes'),
-        space_aggregation: formData.get('spaceAggregation'),
-        rollup: formData.get('rollup'),
+        metric_names: formData.get('metricNames') || null,
+        timeframes: formData.get('timeframes') || null,
+        space_aggregation: formData.get('spaceAggregation') || null,
+        rollup: formData.get('rollup') || null,
         create_in_datadog: formData.get('createInDatadog') === 'on'
     };
-    
-    // Validate form data
-    if (!requestData.description.trim()) {
-        showError('Please provide a description for your notebook.');
-        return;
-    }
-    
+
     currentRequestData = requestData;
-    
+
     try {
         showLoading(true);
         hideMessages();
-        
-        const response = await fetch('/generate', {
+
+        const endpoint = selectedMode === 'dashboard' ? '/generate-dashboard' : '/generate';
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(requestData)
         });
-        
+
         const result = await response.json();
-        
-        if (response.ok && result.success) {
-            handleGenerationSuccess(result);
-        } else {
-            handleGenerationError(result.message || 'Unknown error occurred');
+
+        if (!response.ok) {
+            throw new Error(result.detail || `HTTP error! status: ${response.status}`);
         }
-        
+
+        // Store the generated data
+        if (selectedMode === 'dashboard') {
+            currentNotebookData = result.dashboard_json;
+        } else {
+            currentNotebookData = result.notebook_json;
+        }
+
+        handleGenerationSuccess(result, selectedMode);
+
     } catch (error) {
         console.error('Generation failed:', error);
-        handleGenerationError('Network error: ' + error.message);
+        handleGenerationError(error.message);
     } finally {
         showLoading(false);
     }
 }
 
-function handleGenerationSuccess(result) {
-    currentNotebookData = result;
+function handleGenerationSuccess(result, mode = 'notebook') {
+    console.log(`${mode} generated successfully:`, result);
     
-    // Show results section
-    resultsSection.style.display = 'block';
-    resultsSection.classList.add('slide-up');
-    
-    // Populate tabs
+    // Update results header based on mode
+    const resultsHeader = document.querySelector('.results-header h3');
+    if (resultsHeader) {
+        resultsHeader.textContent = mode === 'dashboard' ? 'Generated Dashboard' : 'Generated Notebook';
+    }
+
+    // Populate tabs with the results
     populatePreviewTab(result.preview);
-    populateJsonTab(result.notebook_json);
-    populateDetailsTab(result);
     
-    // Show success message
-    if (result.datadog_notebook_id) {
-        const message = `Notebook created in Datadog with ID: ${result.datadog_notebook_id}`;
-        const url = `https://app.datadoghq.com/notebook/${result.datadog_notebook_id}`;
-        successDetails.innerHTML = `${message}<br><a href="${url}" target="_blank" style="color: inherit; text-decoration: underline;">View in Datadog →</a>`;
+    if (mode === 'dashboard') {
+        populateJsonTab(result.dashboard_json);
     } else {
-        successDetails.textContent = 'Notebook generated successfully! Use the options above to download or create in Datadog.';
+        populateJsonTab(result.notebook_json);
     }
     
-    showSuccess();
-    
+    populateDetailsTab(result, mode);
+
+    // Show results section with animation
+    resultsSection.style.display = 'block';
+    resultsSection.classList.add('fade-in');
+
     // Scroll to results
-    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    resultsSection.scrollIntoView({ behavior: 'smooth' });
+
+    // Show success message
+    let successMsg = `${mode === 'dashboard' ? 'Dashboard' : 'Notebook'} generated successfully!`;
+    if (mode === 'dashboard' && result.datadog_dashboard_id) {
+        successMsg += ` Dashboard ID: ${result.datadog_dashboard_id}`;
+    } else if (mode === 'notebook' && result.datadog_notebook_id) {
+        successMsg += ` Notebook ID: ${result.datadog_notebook_id}`;
+    }
+    
+    showSuccess(successMsg);
 }
 
 function handleGenerationError(message) {
@@ -465,7 +506,7 @@ function populateJsonTab(notebookJson) {
     }
 }
 
-function populateDetailsTab(result) {
+function populateDetailsTab(result, mode = 'notebook') {
     const details = [];
     
     if (currentRequestData) {

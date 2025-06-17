@@ -15,6 +15,7 @@ from pathlib import Path
 
 # Import our custom modules
 from notebook_generator import NotebookGenerator
+from dashboard_generator import DashboardGenerator
 from datadog_client import DatadogClient
 
 # Configuration
@@ -57,11 +58,13 @@ app.add_middleware(
 
 # Initialize components
 notebook_generator = None
+dashboard_generator = None
 datadog_client = None
 
 if OPENAI_API_KEY:
     notebook_generator = NotebookGenerator(OPENAI_API_KEY)
-    logger.info("Notebook generator initialized")
+    dashboard_generator = DashboardGenerator(OPENAI_API_KEY)
+    logger.info("Notebook and dashboard generators initialized")
 else:
     logger.warning("OpenAI API key not provided")
 
@@ -90,6 +93,21 @@ class NotebookResponse(BaseModel):
     message: str
     notebook_json: Optional[Dict[str, Any]] = None
     datadog_notebook_id: Optional[str] = None
+    preview: Optional[str] = None
+
+class DashboardRequest(BaseModel):
+    description: str
+    metric_names: Optional[str] = None
+    timeframes: Optional[str] = None
+    space_aggregation: Optional[str] = None
+    rollup: Optional[str] = None
+    create_in_datadog: bool = False
+
+class DashboardResponse(BaseModel):
+    success: bool
+    message: str
+    dashboard_json: Optional[Dict[str, Any]] = None
+    datadog_dashboard_id: Optional[str] = None
     preview: Optional[str] = None
 
 # API Routes
@@ -161,7 +179,7 @@ async def health_check():
     """Health check endpoint"""
     status = {
         "status": "healthy",
-        "openai_configured": notebook_generator is not None,
+        "openai_configured": notebook_generator is not None and dashboard_generator is not None,
         "datadog_configured": datadog_client is not None
     }
     
@@ -274,6 +292,98 @@ async def get_example_suggestions(example_type: str):
         raise HTTPException(status_code=404, detail="Example type not found")
     
     return examples[example_type]
+
+# Dashboard API Endpoints
+@app.post("/generate-dashboard", response_model=DashboardResponse)
+async def generate_dashboard(request: DashboardRequest):
+    """Generate a dashboard based on user description"""
+    
+    if not dashboard_generator:
+        raise HTTPException(status_code=500, detail="Dashboard generator not initialized - OpenAI API key missing")
+    
+    try:
+        # Prepare advanced settings
+        advanced_settings = {}
+        if request.metric_names:
+            advanced_settings["metric_names"] = request.metric_names
+        if request.timeframes:
+            advanced_settings["timeframes"] = request.timeframes
+        if request.space_aggregation:
+            advanced_settings["space_aggregation"] = request.space_aggregation
+        if request.rollup:
+            advanced_settings["rollup"] = request.rollup
+        
+        # Generate dashboard
+        dashboard_json = dashboard_generator.generate_dashboard(request.description, None, advanced_settings)
+        
+        # Generate preview
+        preview = dashboard_generator.preview_dashboard(dashboard_json)
+        
+        # Create in Datadog if requested
+        datadog_dashboard_id = None
+        if request.create_in_datadog:
+            if not datadog_client:
+                raise HTTPException(status_code=500, detail="Datadog client not initialized - API credentials missing")
+            
+            # Validate dashboard structure
+            validation = datadog_client.validate_dashboard_structure(dashboard_json)
+            if not validation["valid"]:
+                raise HTTPException(status_code=400, detail=f"Invalid dashboard structure: {validation['errors']}")
+            
+            # Create dashboard in Datadog
+            result = datadog_client.create_dashboard(dashboard_json)
+            if "error" in result:
+                raise HTTPException(status_code=500, detail=f"Failed to create dashboard in Datadog: {result['error']}")
+            
+            dashboard_id = result.get("id")
+            datadog_dashboard_id = str(dashboard_id) if dashboard_id is not None else None
+        
+        return DashboardResponse(
+            success=True,
+            message="Dashboard generated successfully!",
+            dashboard_json=dashboard_json,
+            datadog_dashboard_id=datadog_dashboard_id,
+            preview=preview
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to generate dashboard: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate dashboard: {str(e)}")
+
+@app.get("/dashboards")
+async def list_dashboards(count: int = 5):
+    """List existing dashboards"""
+    if not datadog_client:
+        raise HTTPException(status_code=500, detail="Datadog client not initialized")
+    
+    result = datadog_client.list_dashboards(count=count)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=f"Failed to list dashboards: {result['error']}")
+    
+    return result
+
+@app.get("/dashboards/{dashboard_id}")
+async def get_dashboard(dashboard_id: str):
+    """Get a specific dashboard"""
+    if not datadog_client:
+        raise HTTPException(status_code=500, detail="Datadog client not initialized")
+    
+    result = datadog_client.get_dashboard(dashboard_id)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=f"Dashboard not found: {result['error']}")
+    
+    return result
+
+@app.post("/validate-dashboard")
+async def validate_dashboard(dashboard_data: Dict[str, Any]):
+    """Validate dashboard structure"""
+    if not datadog_client:
+        raise HTTPException(status_code=500, detail="Datadog client not initialized")
+    
+    validation = datadog_client.validate_dashboard_structure(dashboard_data)
+    return validation
 
 # Run the application
 if __name__ == "__main__":

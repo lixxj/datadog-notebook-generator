@@ -3,30 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Datadog Notebook Generator</title>
+    <title>Datadog AI Notebook Generator | Modern Dashboard</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="icon" href="/static/images/datadog-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description" content="Generate AI-powered Datadog notebooks and dashboards with advanced monitoring capabilities">
+    <meta name="theme-color" content="#632ca6">
 </head>
 <body>
     <div class="app-container">
-        <!-- Side Navigation Panel -->
+        <!-- Enhanced Side Navigation Panel -->
         <nav class="side-nav" id="sideNav">
             <div class="side-nav-header">
                 <div class="side-nav-logo">
                     <img src="/static/images/datadog-logo.png" alt="Datadog" class="side-nav-logo-icon">
-                    <span class="side-nav-logo-text">Datadog</span>
+                    <span class="side-nav-logo-text">Datadog AI</span>
                 </div>
-                <button class="side-nav-toggle" id="sideNavToggle">
+                <button class="side-nav-toggle" id="sideNavToggle" aria-label="Toggle navigation">
                     <span class="toggle-icon">‹</span>
                 </button>
             </div>
             
             <div class="side-nav-content">
-                <!-- Search -->
+                <!-- Quick Search -->
                 <div class="side-nav-item">
-                    <div class="side-nav-link">
+                    <div class="side-nav-link" onclick="openQuickSearch()">
                         <span class="side-nav-icon">🔍</span>
-                        <span class="side-nav-text">Go to...</span>
+                        <span class="side-nav-text">Quick Search</span>
                         <span class="side-nav-shortcut">⌘K</span>
                     </div>
                 </div>
@@ -36,6 +41,13 @@
                 <!-- Main Navigation -->
                 <div class="side-nav-section">
                     <div class="side-nav-item active">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">🤖</span>
+                            <span class="side-nav-text">AI Generator</span>
+                        </div>
+                    </div>
+                    
+                    <div class="side-nav-item">
                         <div class="side-nav-link">
                             <span class="side-nav-icon">📊</span>
                             <span class="side-nav-text">Dashboards</span>
@@ -52,7 +64,7 @@
                     <div class="side-nav-item">
                         <div class="side-nav-link">
                             <span class="side-nav-icon">📈</span>
-                            <span class="side-nav-text">Metrics</span>
+                            <span class="side-nav-text">Metrics Explorer</span>
                         </div>
                     </div>
                     
@@ -73,13 +85,13 @@
                     <div class="side-nav-item">
                         <div class="side-nav-link">
                             <span class="side-nav-icon">📝</span>
-                            <span class="side-nav-text">Logs</span>
+                            <span class="side-nav-text">Log Analytics</span>
                         </div>
                     </div>
                     
                     <div class="side-nav-item">
                         <div class="side-nav-link">
-                            <span class="side-nav-icon">🔒</span>
+                            <span class="side-nav-icon">🛡️</span>
                             <span class="side-nav-text">Security</span>
                         </div>
                     </div>
@@ -100,7 +112,7 @@
                     
                     <div class="side-nav-item">
                         <div class="side-nav-link">
-                            <span class="side-nav-icon">🔧</span>
+                            <span class="side-nav-icon">🚀</span>
                             <span class="side-nav-text">CI/CD</span>
                         </div>
                     </div>
@@ -130,6 +142,25 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="side-nav-divider"></div>
+                
+                <!-- Favorites Section -->
+                <div class="side-nav-section">
+                    <div class="side-nav-section-title">Favorites</div>
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">⭐</span>
+                            <span class="side-nav-text">My Dashboards</span>
+                        </div>
+                    </div>
+                    <div class="side-nav-item">
+                        <div class="side-nav-link">
+                            <span class="side-nav-icon">📌</span>
+                            <span class="side-nav-text">Pinned Metrics</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="side-nav-footer">
@@ -142,7 +173,13 @@
                 <div class="side-nav-item">
                     <div class="side-nav-link">
                         <span class="side-nav-icon">❓</span>
-                        <span class="side-nav-text">Help</span>
+                        <span class="side-nav-text">Help & Support</span>
+                    </div>
+                </div>
+                <div class="side-nav-item">
+                    <div class="side-nav-link">
+                        <span class="side-nav-icon">🌙</span>
+                        <span class="side-nav-text">Dark Mode</span>
                     </div>
                 </div>
             </div>
@@ -150,85 +187,117 @@
 
         <!-- Main App Content -->
         <div class="main-app-content">
-            <!-- Header -->
+            <!-- Enhanced Header -->
             <header class="header">
                 <div class="header-content">
                     <div class="logo">
                         <img src="/static/images/datadog-logo.png" alt="Datadog" class="logo-icon">
-                        <h1>Datadog Notebook Generator</h1>
+                        <h1>AI Notebook Generator</h1>
                     </div>
                     <div class="header-info">
-                        <span class="status-indicator" id="statusIndicator">
-                            <span class="status-dot"></span>
-                            <span class="status-text">Checking...</span>
-                        </span>
+                        <div class="status-indicator" id="statusIndicator">
+                            <span class="status-dot" id="statusDot"></span>
+                            <span class="status-text" id="statusText">Checking...</span>
+                        </div>
                     </div>
                 </div>
             </header>
 
             <!-- Main Content -->
             <main class="main-content">
-                <!-- Welcome Section -->
-                <section class="welcome-section">
-                    <h2>Generate AI-Powered Datadog Notebooks</h2>
-                    <p>Transform your monitoring requirements into comprehensive Datadog notebooks using advanced AI. Perfect for support cases, metric demonstrations, escalations, and rapid prototyping.</p>
+                <!-- Enhanced Welcome Section -->
+                <section class="welcome-section fade-in">
+                    <h2>🚀 AI-Powered Datadog Generator</h2>
+                    <p>Transform your monitoring requirements into comprehensive Datadog notebooks and dashboards using advanced AI. Perfect for support cases, metric demonstrations, escalations, and rapid prototyping with real-time insights.</p>
                 </section>
 
-                <!-- Metrics Info Section -->
-                <section class="metrics-info-section">
+                <!-- Enhanced Metrics Info Section -->
+                <section class="metrics-info-section slide-up">
                     <div class="metrics-info-container">
                         <div class="metrics-summary" id="metricsSummary">
                             <div class="metrics-stat">
                                 <span class="stat-number" id="totalMetrics">-</span>
-                                <span class="stat-label">Real Metrics Available</span>
+                                <span class="stat-label">Live Metrics</span>
                             </div>
                             <div class="metrics-stat">
                                 <span class="stat-number" id="totalIntegrations">-</span>
                                 <span class="stat-label">Integrations</span>
                             </div>
+                            <div class="metrics-stat">
+                                <span class="stat-number" id="totalGenerated">0</span>
+                                <span class="stat-label">Generated Today</span>
+                            </div>
                             <div class="metrics-integrations" id="integrationsDisplay">
-                                <span class="integrations-label">Available:</span>
+                                <span class="integrations-label">🔗 Connected Integrations:</span>
                                 <span class="integrations-list" id="integrationsList">Loading...</span>
                             </div>
                         </div>
                         <div class="suggested-metrics" id="suggestedMetrics" style="display: none;">
-                            <h4>Suggested Metrics for Your Request:</h4>
+                            <h4>💡 AI-Suggested Metrics for Your Request:</h4>
                             <div class="metrics-list" id="metricsList"></div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Generator Form -->
+                <!-- Enhanced Generator Form -->
                 <section class="generator-section">
-                    <div class="form-container">
+                    <div class="form-container slide-up">
                         <form id="notebookForm" class="notebook-form">
+                            <!-- Generation Mode Selection -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span class="label-text">🎯 Choose Your Creation Mode</span>
+                                    <span class="label-hint">Select what type of monitoring asset you want to create</span>
+                                </label>
+                                <div class="mode-selector">
+                                    <input type="radio" id="modeNotebook" name="generationMode" value="notebook" class="mode-radio" checked>
+                                    <label for="modeNotebook" class="mode-label">
+                                        <span class="mode-icon">📓</span>
+                                        <span class="mode-text">AI Notebook</span>
+                                        <span class="mode-desc">Interactive analysis with cells and documentation</span>
+                                    </label>
+                                    
+                                    <input type="radio" id="modeDashboard" name="generationMode" value="dashboard" class="mode-radio">
+                                    <label for="modeDashboard" class="mode-label">
+                                        <span class="mode-icon">📊</span>
+                                        <span class="mode-text">Smart Dashboard</span>
+                                        <span class="mode-desc">Visual widgets, charts, and real-time monitoring</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Description Input -->
                             <div class="form-group">
                                 <label for="description" class="form-label">
-                                    <span class="label-text">Describe Your Notebook</span>
-                                    <span class="label-hint">Be specific about what metrics, timeframes, and analysis you need</span>
+                                    <span class="label-text" id="descriptionLabel">🤖 Describe Your Monitoring Needs</span>
+                                    <span class="label-hint" id="descriptionHint">Be specific about metrics, timeframes, and analysis goals. Our AI will optimize the output for you.</span>
                                 </label>
                                 <textarea 
                                     id="description" 
                                     name="description" 
                                     class="form-textarea"
-                                    placeholder="Example: Show CPU and memory usage patterns for web servers over the last 24 hours, including error rates and response times to help troubleshoot performance issues..."
+                                    placeholder="Example: Create a comprehensive monitoring notebook for our e-commerce platform showing CPU and memory usage patterns for web servers over the last 24 hours, including error rates, response times, and database performance metrics to help troubleshoot recent performance degradation..."
                                     required
-                                    rows="4"
+                                    rows="5"
+                                    maxlength="2000"
                                 ></textarea>
+                                <div class="character-counter">
+                                    <span id="charCount">0</span>/2000 characters
+                                </div>
                             </div>
 
-                            <!-- Optional Advanced Settings -->
+                            <!-- Enhanced Advanced Settings -->
                             <div class="advanced-settings">
                                 <h4 class="settings-title">
-                                    <span>Advanced Settings</span>
+                                    <span>⚙️ Advanced Configuration</span>
                                     <span class="optional">(optional)</span>
                                 </h4>
                                 
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="metricNames" class="form-label">
-                                            <span class="label-text">Specific Metric Names</span>
-                                            <span class="label-hint">Comma-separated list of metrics to include</span>
+                                            <span class="label-text">📊 Specific Metrics</span>
+                                            <span class="label-hint">Comma-separated list of exact metric names to include</span>
                                         </label>
                                         <input 
                                             type="text" 
@@ -241,18 +310,19 @@
 
                                     <div class="form-group">
                                         <label for="timeframes" class="form-label">
-                                            <span class="label-text">Timeframes</span>
-                                            <span class="label-hint">Time range for analysis</span>
+                                            <span class="label-text">⏰ Time Range</span>
+                                            <span class="label-hint">Analysis timeframe</span>
                                         </label>
                                         <select id="timeframes" name="timeframes" class="form-select">
-                                            <option value="">Auto-select based on description</option>
-                                            <option value="1h">Last 1 hour</option>
-                                            <option value="4h">Last 4 hours</option>
-                                            <option value="1d">Last 24 hours</option>
-                                            <option value="3d">Last 3 days</option>
-                                            <option value="1w">Last week</option>
-                                            <option value="1m">Last month</option>
-                                            <option value="3m">Last 3 months</option>
+                                            <option value="">🤖 AI Auto-select</option>
+                                            <option value="15m">⚡ Last 15 minutes</option>
+                                            <option value="1h">🕐 Last 1 hour</option>
+                                            <option value="4h">🕓 Last 4 hours</option>
+                                            <option value="1d">📅 Last 24 hours</option>
+                                            <option value="3d">📊 Last 3 days</option>
+                                            <option value="1w">📈 Last week</option>
+                                            <option value="1m">📆 Last month</option>
+                                            <option value="3m">📋 Last 3 months</option>
                                         </select>
                                     </div>
                                 </div>
@@ -260,67 +330,73 @@
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="spaceAggregation" class="form-label">
-                                            <span class="label-text">Space Aggregation</span>
-                                            <span class="label-hint">How to aggregate data points</span>
+                                            <span class="label-text">🔢 Data Aggregation</span>
+                                            <span class="label-hint">How to combine data points across hosts/services</span>
                                         </label>
                                         <select id="spaceAggregation" name="spaceAggregation" class="form-select">
-                                            <option value="">Auto-select based on timeframe</option>
-                                            <option value="avg">Average (avg)</option>
-                                            <option value="sum">Sum (sum)</option>
-                                            <option value="min">Minimum (min)</option>
-                                            <option value="max">Maximum (max)</option>
-                                            <option value="count">Count (count)</option>
-                                            <option value="rate">Rate (rate)</option>
+                                            <option value="">🤖 Smart Selection</option>
+                                            <option value="avg">📊 Average (avg)</option>
+                                            <option value="sum">➕ Sum (sum)</option>
+                                            <option value="min">⬇️ Minimum (min)</option>
+                                            <option value="max">⬆️ Maximum (max)</option>
+                                            <option value="count">🔢 Count (count)</option>
+                                            <option value="rate">📈 Rate (rate)</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="rollup" class="form-label">
-                                            <span class="label-text">Rollup</span>
+                                            <span class="label-text">📏 Data Resolution</span>
                                             <span class="label-hint">Time interval between data points</span>
                                         </label>
                                         <select id="rollup" name="rollup" class="form-select">
-                                            <option value="">Auto-select based on timeframe</option>
-                                            <option value="1m">1 minute</option>
-                                            <option value="5m">5 minutes</option>
-                                            <option value="15m">15 minutes</option>
-                                            <option value="1h">1 hour</option>
-                                            <option value="4h">4 hours</option>
-                                            <option value="1d">1 day</option>
+                                            <option value="">🎯 Optimal Resolution</option>
+                                            <option value="1m">⚡ 1 minute</option>
+                                            <option value="5m">🕐 5 minutes</option>
+                                            <option value="15m">🕒 15 minutes</option>
+                                            <option value="1h">🕓 1 hour</option>
+                                            <option value="4h">🕗 4 hours</option>
+                                            <option value="1d">📅 1 day</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Enhanced Deployment Option -->
                             <div class="form-group">
                                 <div class="checkbox-group">
                                     <input type="checkbox" id="createInDatadog" name="createInDatadog" class="form-checkbox">
                                     <label for="createInDatadog" class="checkbox-label">
-                                        <span class="checkbox-text">Create notebook directly in Datadog</span>
-                                        <span class="checkbox-hint">Requires valid Datadog API credentials</span>
+                                        <span class="checkbox-text" id="createInDatadogText">🚀 Deploy directly to Datadog</span>
+                                        <span class="checkbox-hint">Automatically create and deploy to your Datadog environment (requires valid API credentials)</span>
                                     </label>
                                 </div>
                             </div>
 
+                            <!-- Enhanced Action Buttons -->
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-primary" id="generateBtn">
                                     <span class="btn-icon">🚀</span>
-                                    Generate Notebook
+                                    <span id="generateBtnText">Generate with AI</span>
                                 </button>
                                 <button type="button" class="btn btn-secondary" onclick="clearForm()">
                                     <span class="btn-icon">🔄</span>
-                                    Clear Form
+                                    Reset Form
+                                </button>
+                                <button type="button" class="btn btn-outline" onclick="loadExample()">
+                                    <span class="btn-icon">💡</span>
+                                    Load Example
                                 </button>
                             </div>
                         </form>
                     </div>
                 </section>
 
-                <!-- Results Section -->
+                <!-- Enhanced Results Section -->
                 <section class="results-section" id="resultsSection" style="display: none;">
-                    <div class="results-container">
+                    <div class="results-container slide-up">
                         <div class="results-header">
-                            <h3>Generated Notebook</h3>
+                            <h3>🎉 Generated Content</h3>
                             <div class="results-actions">
                                 <button class="btn btn-small btn-outline" onclick="downloadJSON()">
                                     <span class="btn-icon">📥</span>
@@ -330,16 +406,33 @@
                                     <span class="btn-icon">📋</span>
                                     Copy JSON
                                 </button>
+                                <button class="btn btn-small btn-primary" onclick="openInDatadog()" id="openInDatadogBtn" style="display: none;">
+                                    <span class="btn-icon">🔗</span>
+                                    Open in Datadog
+                                </button>
                             </div>
                         </div>
 
                         <div class="results-content">
-                            <!-- Preview Tab -->
+                            <!-- Enhanced Tab Container -->
                             <div class="tab-container">
                                 <div class="tab-nav">
-                                    <button class="tab-btn active" onclick="showTab('preview')">📊 Preview</button>
-                                    <button class="tab-btn" onclick="showTab('json')">📄 JSON</button>
-                                    <button class="tab-btn" onclick="showTab('details')">ℹ️ Details</button>
+                                    <button class="tab-btn active" onclick="showTab('preview')">
+                                        <span>📊</span>
+                                        Preview
+                                    </button>
+                                    <button class="tab-btn" onclick="showTab('json')">
+                                        <span>📄</span>
+                                        JSON Structure
+                                    </button>
+                                    <button class="tab-btn" onclick="showTab('details')">
+                                        <span>ℹ️</span>
+                                        AI Analysis
+                                    </button>
+                                    <button class="tab-btn" onclick="showTab('metrics')">
+                                        <span>📈</span>
+                                        Metrics Used
+                                    </button>
                                 </div>
 
                                 <div class="tab-content">
@@ -357,17 +450,23 @@
 
                                     <div id="detailsTab" class="tab-pane">
                                         <div class="details-content" id="detailsContent">
-                                            <!-- Details content will be inserted here -->
+                                            <!-- AI analysis details will be inserted here -->
+                                        </div>
+                                    </div>
+
+                                    <div id="metricsTab" class="tab-pane">
+                                        <div class="metrics-content" id="metricsContent">
+                                            <!-- Metrics breakdown will be inserted here -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Success/Error Messages -->
+                            <!-- Enhanced Success/Error Messages -->
                             <div id="successMessage" class="message success" style="display: none;">
                                 <div class="message-icon">🎉</div>
                                 <div class="message-content">
-                                    <strong>Notebook created successfully!</strong>
+                                    <strong>Success! Your content has been generated.</strong>
                                     <p id="successDetails"></p>
                                 </div>
                             </div>
@@ -375,60 +474,166 @@
                             <div id="errorMessage" class="message error" style="display: none;">
                                 <div class="message-icon">❌</div>
                                 <div class="message-content">
-                                    <strong>Error occurred</strong>
+                                    <strong>Oops! Something went wrong.</strong>
                                     <p id="errorDetails"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
-
-                <!-- Examples Section -->
-                <section class="examples-section">
-                    <h3>Example Use Cases</h3>
-                    <div class="examples-grid">
-                        <div class="example-card" onclick="fillExample('performance')">
-                            <div class="example-icon">⚡</div>
-                            <h4>Performance Analysis</h4>
-                            <p>Monitor application performance, response times, and resource utilization</p>
-                        </div>
-                        <div class="example-card" onclick="fillExample('troubleshooting')">
-                            <div class="example-icon">🔧</div>
-                            <h4>Troubleshooting Guide</h4>
-                            <p>Create diagnostic notebooks for incident response and debugging</p>
-                        </div>
-                        <div class="example-card" onclick="fillExample('capacity')">
-                            <div class="example-icon">📊</div>
-                            <h4>Capacity Planning</h4>
-                            <p>Analyze trends and forecast resource needs for scaling decisions</p>
-                        </div>
-                    </div>
-                </section>
             </main>
-
-            <!-- Footer -->
-            <footer class="footer">
-                <div class="footer-content">
-                    <p>&copy; 2024 Datadog Notebook Generator. Built with ❤️ for better monitoring.</p>
-                    <div class="footer-links">
-                        <a href="#" onclick="showAbout()">About</a>
-                        <a href="#" onclick="showHelp()">Help</a>
-                        <a href="https://docs.datadoghq.com/notebooks/" target="_blank">Datadog Docs</a>
-                    </div>
-                </div>
-            </footer>
         </div>
     </div>
 
-    <!-- Loading overlay -->
+    <!-- Enhanced Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <h3>Generating Your Notebook</h3>
-            <p>Our AI is crafting the perfect monitoring solution for you...</p>
+            <h3 id="loadingTitle">🤖 AI is Working...</h3>
+            <p id="loadingMessage">Analyzing your requirements and generating optimized content...</p>
+            <div class="loading-progress" id="loadingProgress" style="margin-top: 1rem;">
+                <div class="progress-step active" id="step1">📋 Parsing requirements</div>
+                <div class="progress-step" id="step2">🔍 Finding optimal metrics</div>
+                <div class="progress-step" id="step3">🏗️ Building structure</div>
+                <div class="progress-step" id="step4">✨ Finalizing output</div>
+            </div>
         </div>
     </div>
 
+    <!-- Enhanced JavaScript -->
     <script src="/static/js/app.js"></script>
+    <script>
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            checkSystemStatus();
+            loadMetricsInfo();
+            setupFormValidation();
+            setupKeyboardShortcuts();
+        });
+
+        // Character counter for description
+        document.getElementById('description').addEventListener('input', function() {
+            const charCount = this.value.length;
+            document.getElementById('charCount').textContent = charCount;
+            
+            if (charCount > 1800) {
+                document.getElementById('charCount').style.color = '#ff5555';
+            } else if (charCount > 1500) {
+                document.getElementById('charCount').style.color = '#ffcc00';
+            } else {
+                document.getElementById('charCount').style.color = '#74818a';
+            }
+        });
+
+        // Mode selector updates
+        document.querySelectorAll('input[name="generationMode"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const isNotebook = this.value === 'notebook';
+                document.getElementById('descriptionLabel').textContent = 
+                    isNotebook ? '🤖 Describe Your Notebook Needs' : '🤖 Describe Your Dashboard Needs';
+                document.getElementById('descriptionHint').textContent = 
+                    isNotebook ? 
+                    'Be specific about metrics, timeframes, and analysis goals. Our AI will create an interactive notebook.' :
+                    'Be specific about metrics, timeframes, and visualization preferences. Our AI will create a comprehensive dashboard.';
+                document.getElementById('createInDatadogText').textContent = 
+                    isNotebook ? '🚀 Deploy notebook directly to Datadog' : '🚀 Deploy dashboard directly to Datadog';
+                document.getElementById('generateBtnText').textContent = 
+                    isNotebook ? 'Generate AI Notebook' : 'Generate AI Dashboard';
+            });
+        });
+
+        // Enhanced side navigation toggle
+        document.getElementById('sideNavToggle').addEventListener('click', function() {
+            const sideNav = document.getElementById('sideNav');
+            sideNav.classList.toggle('collapsed');
+            
+            // Save preference
+            localStorage.setItem('sideNavCollapsed', sideNav.classList.contains('collapsed'));
+        });
+
+        // Restore navigation state
+        if (localStorage.getItem('sideNavCollapsed') === 'true') {
+            document.getElementById('sideNav').classList.add('collapsed');
+        }
+
+        // Keyboard shortcuts
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Cmd/Ctrl + K for quick search
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    openQuickSearch();
+                }
+                
+                // Cmd/Ctrl + Enter to submit form
+                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('generateBtn').click();
+                }
+            });
+        }
+
+        // Quick search functionality
+        function openQuickSearch() {
+            // Placeholder for quick search modal
+            alert('🔍 Quick Search coming soon! Use Cmd/Ctrl+K to access.');
+        }
+
+        // Load example functionality
+        function loadExample() {
+            const examples = [
+                "Create a comprehensive performance monitoring notebook for our microservices architecture showing CPU, memory, and network metrics across all services over the last 4 hours, including error rates and response time percentiles to identify bottlenecks.",
+                "Build a dashboard for monitoring our e-commerce platform during Black Friday, focusing on checkout flow metrics, payment processing times, database performance, and user experience indicators over the last 24 hours.",
+                "Generate a security monitoring notebook showing authentication attempts, failed logins, and suspicious activity patterns across our infrastructure for the past week, including geolocation analysis and threat indicators."
+            ];
+            
+            const randomExample = examples[Math.floor(Math.random() * examples.length)];
+            document.getElementById('description').value = randomExample;
+            document.getElementById('charCount').textContent = randomExample.length;
+        }
+
+        // Enhanced form validation
+        function setupFormValidation() {
+            const form = document.getElementById('notebookForm');
+            const descriptionInput = document.getElementById('description');
+            
+            descriptionInput.addEventListener('blur', function() {
+                if (this.value.length < 20) {
+                    this.style.borderColor = '#ff5555';
+                    showTooltip(this, 'Please provide a more detailed description (at least 20 characters)');
+                } else {
+                    this.style.borderColor = '#e5e9ec';
+                    hideTooltip(this);
+                }
+            });
+        }
+
+        // Tooltip helpers
+        function showTooltip(element, message) {
+            // Simple tooltip implementation
+            const tooltip = document.createElement('div');
+            tooltip.className = 'validation-tooltip';
+            tooltip.textContent = message;
+            tooltip.style.cssText = `
+                position: absolute;
+                background: #ff5555;
+                color: white;
+                padding: 0.5rem;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                margin-top: 0.25rem;
+                z-index: 1000;
+            `;
+            element.parentNode.appendChild(tooltip);
+        }
+
+        function hideTooltip(element) {
+            const tooltip = element.parentNode.querySelector('.validation-tooltip');
+            if (tooltip) {
+                tooltip.remove();
+            }
+        }
+    </script>
 </body>
 </html> 

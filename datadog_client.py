@@ -275,4 +275,296 @@ class DatadogClient:
                 "valid": False,
                 "errors": [f"Validation error: {str(e)}"],
                 "warnings": warnings
+            }
+
+    # Dashboard Methods
+    def create_dashboard(self, dashboard_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Create a dashboard in Datadog
+        
+        Args:
+            dashboard_data: The dashboard JSON structure
+            
+        Returns:
+            Response from Datadog API
+        """
+        url = f"{self.base_url}/api/v1/dashboard"
+        
+        try:
+            # Validate dashboard structure first
+            validation_result = self.validate_dashboard_structure(dashboard_data)
+            if not validation_result.get("valid", False):
+                logger.error(f"Dashboard validation failed: {validation_result.get('errors', [])}")
+                return {
+                    "error": "Dashboard validation failed",
+                    "validation_errors": validation_result.get("errors", []),
+                    "status_code": 400
+                }
+            
+            # Clean dashboard data for creation (removes deprecated fields)
+            clean_data = self._clean_dashboard_data_for_creation(dashboard_data)
+            
+            logger.info(f"Creating dashboard with title: {clean_data.get('title', 'Untitled')}")
+            logger.debug(f"Dashboard payload (cleaned): {json.dumps(clean_data, indent=2)}")
+            
+            response = self.session.post(url, json=clean_data)
+            response.raise_for_status()
+            
+            result = response.json()
+            dashboard_id = result.get('id', 'Unknown ID')
+            logger.info(f"Successfully created dashboard with ID: {dashboard_id}")
+            return result
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to create dashboard: {str(e)}")
+            if hasattr(e, 'response') and e.response is not None:
+                try:
+                    error_details = e.response.json()
+                    logger.error(f"API Error Details: {error_details}")
+                    
+                    # Check for specific deprecated field errors
+                    if "errors" in error_details:
+                        for error in error_details["errors"]:
+                            if "is_read_only" in str(error).lower():
+                                logger.error("The is_read_only field is deprecated. Please update your dashboard generation.")
+                    
+                    return {"error": error_details, "status_code": e.response.status_code}
+                except json.JSONDecodeError:
+                    logger.error(f"Response content: {e.response.text}")
+                    return {"error": e.response.text, "status_code": e.response.status_code}
+            return {"error": str(e), "status_code": None}
+        except Exception as e:
+            logger.error(f"Unexpected error creating dashboard: {str(e)}")
+            return {"error": f"Unexpected error: {str(e)}", "status_code": 500}
+    
+    def _clean_dashboard_data_for_creation(self, dashboard_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Clean dashboard data by removing read-only and deprecated fields for creation
+        """
+        clean_data = json.loads(json.dumps(dashboard_data))  # Deep copy
+        
+        # Remove read-only and deprecated fields
+        deprecated_and_readonly_fields = [
+            "id", 
+            "created_at", 
+            "modified_at", 
+            "author_handle", 
+            "url",
+            "is_read_only"  # Deprecated as of 2023
+        ]
+        
+        for field in deprecated_and_readonly_fields:
+            clean_data.pop(field, None)
+        
+        # Clean up widgets - remove IDs and other auto-generated fields
+        widgets = clean_data.get("widgets", [])
+        for widget in widgets:
+            widget.pop("id", None)
+            # Also clean definition level if it exists
+            if "definition" in widget:
+                widget["definition"].pop("id", None)
+        
+        # Ensure template_variables have proper structure
+        template_vars = clean_data.get("template_variables", [])
+        for var in template_vars:
+            # Remove any auto-generated fields from template variables
+            var.pop("id", None)
+            # Ensure available_values is present for new template variable format
+            if "available_values" not in var and "default" in var:
+                var["available_values"] = ["*"]
+        
+        return clean_data
+    
+    def get_dashboard(self, dashboard_id: str) -> Dict[str, Any]:
+        """
+        Get a dashboard by ID
+        
+        Args:
+            dashboard_id: The dashboard ID
+            
+        Returns:
+            Dashboard data or error information
+        """
+        url = f"{self.base_url}/api/v1/dashboard/{dashboard_id}"
+        
+        try:
+            response = self.session.get(url)
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to get dashboard {dashboard_id}: {str(e)}")
+            return {"error": str(e), "status_code": getattr(e.response, 'status_code', None)}
+    
+    def list_dashboards(self, count: int = 10, start: int = 0, 
+                       sort_field: str = "modified_at", sort_dir: str = "desc") -> Dict[str, Any]:
+        """
+        List dashboards
+        
+        Args:
+            count: Number of dashboards to return (max 100)
+            start: Starting index for pagination
+            sort_field: Field to sort by
+            sort_dir: Sort direction (asc/desc)
+            
+        Returns:
+            List of dashboards or error information
+        """
+        url = f"{self.base_url}/api/v1/dashboard"
+        
+        params = {
+            "count": min(count, 100),  # API limit
+            "start": start,
+            "sort_field": sort_field,
+            "sort_dir": sort_dir
+        }
+        
+        try:
+            response = self.session.get(url, params=params)
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to list dashboards: {str(e)}")
+            return {"error": str(e), "status_code": getattr(e.response, 'status_code', None)}
+    
+    def update_dashboard(self, dashboard_id: str, dashboard_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Update a dashboard
+        
+        Args:
+            dashboard_id: The dashboard ID
+            dashboard_data: The updated dashboard data
+            
+        Returns:
+            Updated dashboard data or error information
+        """
+        url = f"{self.base_url}/api/v1/dashboard/{dashboard_id}"
+        
+        try:
+            clean_data = self._clean_dashboard_data_for_creation(dashboard_data)
+            response = self.session.put(url, json=clean_data)
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to update dashboard {dashboard_id}: {str(e)}")
+            return {"error": str(e), "status_code": getattr(e.response, 'status_code', None)}
+    
+    def delete_dashboard(self, dashboard_id: str) -> Dict[str, Any]:
+        """
+        Delete a dashboard
+        
+        Args:
+            dashboard_id: The dashboard ID
+            
+        Returns:
+            Success status or error information
+        """
+        url = f"{self.base_url}/api/v1/dashboard/{dashboard_id}"
+        
+        try:
+            response = self.session.delete(url)
+            response.raise_for_status()
+            return {"success": True, "status_code": response.status_code}
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to delete dashboard {dashboard_id}: {str(e)}")
+            return {"error": str(e), "status_code": getattr(e.response, 'status_code', None)}
+    
+    def validate_dashboard_structure(self, dashboard_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate dashboard structure before creation
+        
+        Args:
+            dashboard_data: The dashboard JSON structure
+            
+        Returns:
+            Validation result
+        """
+        errors = []
+        warnings = []
+        
+        try:
+            # Check required fields
+            required_fields = ["title", "widgets", "layout_type"]
+            for field in required_fields:
+                if field not in dashboard_data:
+                    errors.append(f"Missing required field: {field}")
+            
+            # Check layout_type
+            layout_type = dashboard_data.get("layout_type")
+            if layout_type:
+                valid_layouts = ["ordered", "free"]
+                if layout_type not in valid_layouts:
+                    errors.append(f"Invalid layout_type. Must be one of: {', '.join(valid_layouts)}")
+            
+            # Check widgets structure
+            if "widgets" in dashboard_data:
+                widgets = dashboard_data["widgets"]
+                if not isinstance(widgets, list):
+                    errors.append("Widgets must be a list")
+                else:
+                    for i, widget in enumerate(widgets):
+                        if "definition" not in widget:
+                            errors.append(f"Widget {i} missing 'definition' field")
+                        else:
+                            widget_def = widget["definition"]
+                            
+                            # Check widget definition structure
+                            if "type" not in widget_def:
+                                errors.append(f"Widget {i} definition missing 'type' field")
+                            
+                            # Validate layout fields based on layout_type
+                            if layout_type == "ordered":
+                                if "layout" in widget:
+                                    errors.append(f"Widget {i} should not have 'layout' field for ordered layout_type")
+                            elif layout_type == "free":
+                                if "layout" not in widget:
+                                    errors.append(f"Widget {i} missing 'layout' field for free layout_type")
+                                else:
+                                    layout = widget["layout"]
+                                    required_layout_fields = ["x", "y", "width", "height"]
+                                    for field in required_layout_fields:
+                                        if field not in layout:
+                                            errors.append(f"Widget {i} layout missing '{field}' field")
+                            
+                            # Check widget requests
+                            if "requests" in widget_def:
+                                requests = widget_def["requests"]
+                                if not isinstance(requests, list):
+                                    errors.append(f"Widget {i} requests must be a list")
+                                else:
+                                    for j, request in enumerate(requests):
+                                        if "q" not in request:
+                                            errors.append(f"Widget {i} request {j} missing 'q' (query) field")
+                            
+                            # Check time configuration
+                            if "time" not in widget_def:
+                                warnings.append(f"Widget {i} missing 'time' configuration")
+            
+            # Check for deprecated fields
+            deprecated_fields = ["is_read_only", "author_handle", "created_at", "modified_at", "url"]
+            for field in deprecated_fields:
+                if field in dashboard_data:
+                    warnings.append(f"Field '{field}' is deprecated and will be removed")
+            
+            # Check optional but recommended fields
+            if "description" not in dashboard_data:
+                warnings.append("No description specified")
+            
+            if "template_variables" not in dashboard_data:
+                warnings.append("No template variables specified")
+            
+            return {
+                "valid": len(errors) == 0,
+                "errors": errors,
+                "warnings": warnings
+            }
+            
+        except Exception as e:
+            return {
+                "valid": False,
+                "errors": [f"Validation error: {str(e)}"],
+                "warnings": warnings
             } 
