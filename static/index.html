@@ -116,6 +116,13 @@
                             <span class="side-nav-text">CI/CD</span>
                         </div>
                     </div>
+                    
+                    <div class="side-nav-item">
+                        <div class="side-nav-link" onclick="window.open('/typeracer', '_blank')">
+                            <span class="side-nav-icon">⚡</span>
+                            <span class="side-nav-text">TypeRacer Game</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="side-nav-divider"></div>
@@ -644,8 +651,437 @@
                 <div class="progress-step" id="step3">🏗️ Building structure</div>
                 <div class="progress-step" id="step4">✨ Finalizing output</div>
             </div>
+            
+            <!-- Jett's TypeRacer Arena Embedded -->
+            <div class="jett-typeracer-arena" style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(145deg, rgba(15, 15, 35, 0.95), rgba(26, 26, 46, 0.9)); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; max-width: 650px; margin: 2rem auto 0; position: relative; overflow: hidden; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
+                <!-- Jett's Lightning Border -->
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00d4ff, #ff6b9d, #00d4ff); background-size: 200% 100%; animation: borderGlow 2s linear infinite;"></div>
+                
+                <div class="jett-header" style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px;">
+                        <span class="lightning" style="font-size: 1.2rem; animation: lightningFlicker 1.5s ease-in-out infinite alternate;">⚡</span>
+                        <h4 style="color: #00d4ff; margin: 0; font-size: 1.1rem; font-family: 'Orbitron', monospace; font-weight: 900; text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff;">Jett's Speed Trial</h4>
+                        <span class="lightning" style="font-size: 1.2rem; animation: lightningFlicker 1.5s ease-in-out infinite alternate;">⚡</span>
+                    </div>
+                    <p style="color: #ff6b9d; margin: 0; opacity: 0.9; font-size: 0.8rem; font-style: italic;">Lightning-fast precision while AI generates</p>
+                </div>
+                
+                                <!-- Jett's Challenge Arena -->
+                <div class="jett-challenge-container">
+                    <!-- Challenge Label -->
+                    <div class="jett-challenge-label" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; color: #ff6b9d; font-weight: 600; font-size: 0.9rem;">
+                        <span class="lightning" style="animation: lightningFlicker 1.5s ease-in-out infinite alternate;">⚡</span>
+                        <span>Jett's Challenge</span>
+                        <span class="lightning" style="animation: lightningFlicker 1.5s ease-in-out infinite alternate;">⚡</span>
+                    </div>
+                    
+                    <div class="modal-sentence-container">
+                        <p id="modalSentence" class="modal-sentence">The quick brown fox jumps over the lazy dog.</p>
+                    </div>
+                    
+                    <!-- Input Label -->
+                    <div class="jett-input-label" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: #00d4ff; font-weight: 600; font-size: 0.8rem;">
+                        <span class="speed-icon" style="animation: runningMan 0.8s ease-in-out infinite alternate;">🏃‍♂️</span>
+                        <span>Show Jett your lightning precision!</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <input type="text" id="modalTypingInput" placeholder="Type at the speed of light..." class="modal-typing-input" autocomplete="off" spellcheck="false">
+                    </div>
+                    
+                    <div class="modal-race-track">
+                        <div class="modal-track"></div>
+                        <div class="modal-car" id="modalCar">
+                            <div class="modal-mazda-mx5">
+                                <div class="modal-car-body">
+                                    <div class="modal-windshield"></div>
+                                    <div class="modal-wheel modal-front-wheel"></div>
+                                    <div class="modal-wheel modal-rear-wheel"></div>
+                                </div>
+                            </div>
+                            <div class="modal-driver-name" style="font-size: 0.6rem; color: white; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 8px; margin-top: 2px; font-weight: bold; white-space: nowrap; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">Jett's Mazda</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Jett's Stats -->
+                    <div class="jett-stats" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 10px;">
+                        <div class="jett-stat-item" style="display: flex; align-items: center; gap: 8px; background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 157, 0.1)); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 12px; border-radius: 10px; backdrop-filter: blur(5px); transition: all 0.3s ease;">
+                            <div class="jett-stat-icon" style="font-size: 1.2rem; animation: iconPulse 2s ease-in-out infinite;">⚡</div>
+                            <div>
+                                <div style="color: #ff6b9d; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Jett Speed</div>
+                                <div style="color: #00d4ff; font-size: 1rem; font-weight: 700; font-family: 'Orbitron', monospace; text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);"><span id="modalWpm">0</span> WPM</div>
+                            </div>
+                        </div>
+                        
+                        <div class="jett-stat-item" style="display: flex; align-items: center; gap: 8px; background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 157, 0.1)); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 12px; border-radius: 10px; backdrop-filter: blur(5px); transition: all 0.3s ease;">
+                            <div class="jett-stat-icon" style="font-size: 1.2rem; animation: iconPulse 2s ease-in-out infinite;">🎯</div>
+                            <div>
+                                <div style="color: #ff6b9d; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Mission Progress</div>
+                                <div style="color: #00d4ff; font-size: 1rem; font-weight: 700; font-family: 'Orbitron', monospace; text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);"><span id="modalProgress">0%</span></div>
+                            </div>
+                        </div>
+                        
+                        <button onclick="resetModalTypeRacer()" class="jett-reset-btn" style="background: linear-gradient(145deg, #00d4ff, #0099cc); color: #0a0a1f; border: none; padding: 8px 12px; border-radius: 15px; font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 3px 10px rgba(0, 212, 255, 0.3); font-family: 'Exo 2', sans-serif;">
+                            <span style="animation: flagWave 1s ease-in-out infinite alternate;">🏁</span>
+                            Reset Trial
+                        </button>
+                    </div>
+                    
+                    <div id="modalCompletionMessage" class="jett-completion-message" style="display: none;">
+                        <div class="jett-victory-content" style="position: relative; z-index: 2;">
+                            <h4 style="margin-bottom: 8px; font-size: 1rem; font-family: 'Orbitron', monospace; color: #00d4ff; text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff; animation: victoryPulse 1s ease-in-out infinite alternate;">⚡ JETT SPEED ACHIEVED! ⚡</h4>
+                            <p style="color: #ff6b9d; font-size: 0.8rem; margin-bottom: 8px; font-weight: 300;">Lightning reflexes! You've mastered Jett's precision!</p>
+                            <div style="margin: 8px 0; padding: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <span style="color: #00d4ff; font-size: 0.9rem; font-weight: 700; font-family: 'Orbitron', monospace;">Final Speed: <span id="modalFinalWpm">0</span> WPM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Jett's Cyberpunk TypeRacer CSS for Modal -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap');
+        
+        /* Jett's Cyberpunk Animations */
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        
+        @keyframes lightningFlicker {
+            0% { opacity: 1; text-shadow: 0 0 5px #ffff00; }
+            100% { opacity: 0.7; text-shadow: 0 0 10px #ffff00, 0 0 15px #ffff00; }
+        }
+        
+        @keyframes runningMan {
+            0% { transform: translateX(0px); }
+            100% { transform: translateX(3px); }
+        }
+        
+        @keyframes trackGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes victoryPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+        
+        @keyframes flagWave {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(5deg); }
+        }
+        
+        @keyframes victoryRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Adapted TypeRacer styles for modal */
+        .modal-sentence-container {
+            background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 157, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-sentence {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #ffffff;
+            font-family: 'Exo 2', monospace;
+            font-weight: 400;
+            text-align: center;
+            margin: 0;
+        }
+        
+        .modal-typing-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 0.9rem;
+            background: linear-gradient(145deg, rgba(15, 15, 35, 0.8), rgba(26, 26, 46, 0.8));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            outline: none;
+            color: #ffffff;
+            font-family: 'Exo 2', monospace;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-typing-input:focus {
+            border-color: #00d4ff;
+            box-shadow: 
+                0 0 15px rgba(0, 212, 255, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .modal-typing-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+        }
+        
+        .modal-race-track {
+            background: linear-gradient(145deg, #0a0a1f, #1a1a3e);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            height: 60px;
+            border-radius: 10px;
+            position: relative;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 2px 10px rgba(0, 0, 0, 0.3),
+                0 5px 15px rgba(0, 212, 255, 0.2);
+        }
+        
+        .modal-track {
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                #0a0a1f 0px,
+                #0a0a1f 30px,
+                #1a1a3e 30px,
+                #1a1a3e 40px
+            );
+            position: relative;
+        }
+        
+        .modal-track::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00d4ff, #ff6b9d, #00d4ff);
+            background-size: 200% 100%;
+            animation: trackGlow 2s linear infinite;
+            transform: translateY(-50%);
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+        }
+        
+        .modal-car {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            transition: left 0.3s ease;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .modal-mazda-mx5 {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            margin: 3px 0;
+        }
+        
+        .modal-car-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b9d, #e55189);
+            border-radius: 6px 3px 3px 6px;
+            box-shadow: 
+                0 2px 6px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: perspective(80px) rotateX(10deg);
+            animation: carHover 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes carHover {
+            0% { transform: perspective(80px) rotateX(10deg) translateY(0px); }
+            100% { transform: perspective(80px) rotateX(10deg) translateY(-1px); }
+        }
+        
+        .modal-windshield {
+            position: absolute;
+            top: 1px;
+            left: 23px;
+            width: 12px;
+            height: 8px;
+            background: linear-gradient(135deg, rgba(0,212,255,0.8), rgba(0,212,255,0.6));
+            border-radius: 2px 1px 1px 1px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .modal-wheel {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #333, #111);
+            border-radius: 50%;
+            border: 1px solid #555;
+            animation: wheelSpin 0.5s linear infinite;
+        }
+        
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .modal-front-wheel {
+            top: 10px;
+            left: 28px;
+        }
+        
+        .modal-rear-wheel {
+            top: 10px;
+            left: 8px;
+        }
+        
+        .modal-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .modal-stat-value {
+            color: #00d4ff;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+        }
+        
+                 .jett-completion-message {
+             text-align: center;
+             margin-top: 15px;
+             padding: 15px;
+             background: linear-gradient(145deg, rgba(0, 212, 255, 0.2), rgba(255, 107, 157, 0.2));
+             border: 2px solid #00d4ff;
+             border-radius: 15px;
+             backdrop-filter: blur(10px);
+             position: relative;
+             overflow: hidden;
+             transition: all 0.3s ease;
+         }
+         
+         .jett-completion-message::before {
+             content: '';
+             position: absolute;
+             top: -50%;
+             left: -50%;
+             width: 200%;
+             height: 200%;
+             background: conic-gradient(transparent, rgba(0, 212, 255, 0.1), transparent);
+             animation: victoryRotate 4s linear infinite;
+         }
+        
+        .modal-completion-message h4 {
+            color: #ff6b9d;
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            font-family: 'Orbitron', monospace;
+            text-shadow: 
+                0 0 5px #ff6b9d,
+                0 0 10px #ff6b9d;
+            animation: victoryPulse 1s ease-in-out infinite alternate;
+        }
+        
+        @keyframes victoryPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+        
+        .modal-completion-message p {
+            color: #ffffff;
+            margin: 0;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Character highlighting */
+        .char {
+            background-color: transparent;
+            transition: background-color 0.1s ease;
+        }
+        
+        .char.correct {
+            background-color: #00b894;
+            color: white;
+        }
+        
+        .char.incorrect {
+            background-color: #e17055;
+            color: white;
+        }
+        
+        .char.current {
+            background-color: #74b9ff;
+            color: white;
+        }
+        
+        .modal-reset-btn {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            padding: 5px 10px;
+            border-radius: 15px;
+            color: #00d4ff;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+        }
+        
+                 .modal-reset-btn:hover {
+             background: rgba(0, 212, 255, 0.3);
+             transform: translateY(-1px);
+             box-shadow: 0 3px 10px rgba(0, 212, 255, 0.3);
+         }
+         
+         /* Jett's Interactive Effects */
+         .jett-stat-item:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 8px 20px rgba(0, 212, 255, 0.2);
+         }
+         
+         .jett-reset-btn:hover {
+             transform: translateY(-2px) scale(1.05);
+             box-shadow: 0 8px 20px rgba(0, 212, 255, 0.5);
+         }
+         
+         /* Enhanced Jett Arena Container */
+         .jett-typeracer-arena {
+             font-family: 'Exo 2', sans-serif;
+         }
+         
+         .jett-typeracer-arena:before {
+             content: '';
+             position: absolute;
+             top: 0;
+             left: 0;
+             right: 0;
+             bottom: 0;
+             background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+             background-size: 400% 400%;
+             animation: gradientShift 8s ease infinite;
+             opacity: 0.1;
+             z-index: -1;
+         }
+         
+         @keyframes gradientShift {
+             0% { background-position: 0% 50%; }
+             50% { background-position: 100% 50%; }
+             100% { background-position: 0% 50%; }
+         }
+    </style>
 
     <!-- Enhanced JavaScript -->
     <script src="/static/js/app.js"></script>
@@ -826,6 +1262,224 @@
             }
         };
         
+        // TypeRacer Modal Game Logic
+        let modalCurrentSentence = "The quick brown fox jumps over the lazy dog.";
+        let modalCurrentPosition = 0;
+        let modalStartTime = null;
+        let modalGameCompleted = false;
+        let modalCorrectChars = 0;
+
+        const modalSentences = [
+            "The quick brown fox jumps over the lazy dog.",
+            "Pack my box with five dozen liquor jugs.",
+            "How vexingly quick daft zebras jump!",
+            "Bright vixens jump; dozy fowl quack.",
+            "Sphinx of black quartz, judge my vow.",
+            "Two driven jocks help fax my big quiz.",
+            "Quick zephyrs blow, vexing daft Jim.",
+            "Waltz, bad nymph, for quick jigs vex.",
+            "Glib jocks quiz nymph to vex dwarf.",
+            "Jackdaws love my big sphinx of quartz."
+        ];
+
+        function initModalTypeRacer() {
+            modalCurrentSentence = modalSentences[Math.floor(Math.random() * modalSentences.length)];
+            modalCurrentPosition = 0;
+            modalStartTime = null;
+            modalGameCompleted = false;
+            modalCorrectChars = 0;
+            
+            setupModalSentenceHighlighting();
+            const modalInput = document.getElementById('modalTypingInput');
+            if (modalInput) {
+                modalInput.value = '';
+                modalInput.disabled = false;
+            }
+            
+            const modalCar = document.getElementById('modalCar');
+            if (modalCar) modalCar.style.left = '0%';
+            
+            const modalWpm = document.getElementById('modalWpm');
+            if (modalWpm) modalWpm.textContent = '0';
+            
+            const modalProgress = document.getElementById('modalProgress');
+            if (modalProgress) modalProgress.textContent = '0%';
+            
+            const modalCompletion = document.getElementById('modalCompletionMessage');
+            if (modalCompletion) modalCompletion.style.display = 'none';
+        }
+
+        function setupModalSentenceHighlighting() {
+            const modalSentenceEl = document.getElementById('modalSentence');
+            if (!modalSentenceEl) return;
+            
+            modalSentenceEl.innerHTML = '';
+            for (let i = 0; i < modalCurrentSentence.length; i++) {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = modalCurrentSentence[i];
+                if (i === 0) {
+                    span.classList.add('current');
+                }
+                modalSentenceEl.appendChild(span);
+            }
+        }
+
+        function setupModalTypeRacerListeners() {
+            const modalInput = document.getElementById('modalTypingInput');
+            if (!modalInput) return;
+            
+            modalInput.addEventListener('input', function(e) {
+                if (modalGameCompleted) return;
+                
+                if (modalStartTime === null) {
+                    modalStartTime = Date.now();
+                }
+                
+                const typedText = e.target.value;
+                const chars = document.querySelectorAll('.char');
+                
+                // Reset all character classes
+                chars.forEach((char, index) => {
+                    char.className = 'char';
+                });
+                
+                // Update character highlighting
+                for (let i = 0; i < Math.min(typedText.length, modalCurrentSentence.length); i++) {
+                    if (typedText[i] === modalCurrentSentence[i]) {
+                        chars[i].classList.add('correct');
+                        modalCorrectChars = i + 1;
+                    } else {
+                        chars[i].classList.add('incorrect');
+                        modalCorrectChars = i;
+                        break;
+                    }
+                }
+                
+                // Highlight current character
+                if (typedText.length < modalCurrentSentence.length) {
+                    chars[typedText.length].classList.add('current');
+                }
+                
+                const progress = (modalCorrectChars / modalCurrentSentence.length) * 100;
+                const modalCar = document.getElementById('modalCar');
+                if (modalCar) modalCar.style.left = `${Math.min(progress, 90)}%`;
+                
+                const modalProgress = document.getElementById('modalProgress');
+                if (modalProgress) modalProgress.textContent = `${Math.round(progress)}%`;
+                
+                updateModalWPM();
+                
+                if (typedText === modalCurrentSentence) {
+                    completeModalGame();
+                }
+            });
+        }
+
+        function updateModalWPM() {
+            if (modalStartTime === null) return;
+            
+            const currentTime = Date.now();
+            const timeElapsed = (currentTime - modalStartTime) / 1000 / 60;
+            const wordsTyped = modalCorrectChars / 5;
+            const wpm = Math.round(wordsTyped / timeElapsed);
+            
+            const modalWpm = document.getElementById('modalWpm');
+            if (modalWpm) modalWpm.textContent = isFinite(wpm) ? wpm : 0;
+        }
+
+        function completeModalGame() {
+            modalGameCompleted = true;
+            const modalInput = document.getElementById('modalTypingInput');
+            if (modalInput) modalInput.disabled = true;
+            
+            const modalCar = document.getElementById('modalCar');
+            if (modalCar) modalCar.style.left = '90%';
+            
+            const modalFinalWpm = document.getElementById('modalFinalWpm');
+            const modalWpm = document.getElementById('modalWpm');
+            if (modalFinalWpm && modalWpm) {
+                modalFinalWpm.textContent = modalWpm.textContent;
+            }
+            
+            const modalCompletion = document.getElementById('modalCompletionMessage');
+            if (modalCompletion) modalCompletion.style.display = 'block';
+            
+            createModalConfetti();
+        }
+
+        function createModalConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd'];
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.width = '8px';
+                    confetti.style.height = '8px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                    confetti.style.zIndex = '10000';
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.pointerEvents = 'none';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    const animation = confetti.animate([
+                        { transform: 'translateY(0px) rotate(0deg)', opacity: 1 },
+                        { transform: 'translateY(' + (window.innerHeight + 100) + 'px) rotate(720deg)', opacity: 0 }
+                    ], {
+                        duration: 2000,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    });
+                    
+                    animation.onfinish = () => {
+                        confetti.remove();
+                    };
+                }, i * 30);
+            }
+        }
+
+        function resetModalTypeRacer() {
+            initModalTypeRacer();
+            setupModalTypeRacerListeners();
+        }
+
+        // Initialize TypeRacer when loading overlay is shown
+        const originalShowLoading = window.showLoading;
+        window.showLoading = function(show) {
+            if (originalShowLoading) {
+                originalShowLoading(show);
+            } else {
+                // Fallback if original function doesn't exist
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                const generateBtn = document.getElementById('generateBtn');
+                if (show) {
+                    if (loadingOverlay) loadingOverlay.style.display = 'flex';
+                    if (generateBtn) {
+                        generateBtn.disabled = true;
+                        generateBtn.innerHTML = '<span class="btn-icon">⏳</span>Generating...';
+                    }
+                } else {
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                    if (generateBtn) {
+                        generateBtn.disabled = false;
+                        generateBtn.innerHTML = '<span class="btn-icon">🚀</span>Generate Notebook';
+                    }
+                }
+            }
+            
+            if (show) {
+                // Initialize TypeRacer when loading starts
+                setTimeout(() => {
+                    initModalTypeRacer();
+                    setupModalTypeRacerListeners();
+                }, 500);
+            }
+        };
+
         // Add floating preview button
         function addFloatingPreviewButton(notebookData) {
             // Remove existing floating button
@@ -890,6 +1544,9 @@
             }
         `;
         document.head.appendChild(style);
+        
+        // Make resetModalTypeRacer globally available
+        window.resetModalTypeRacer = resetModalTypeRacer;
     </script>
 </body>
 </html> 

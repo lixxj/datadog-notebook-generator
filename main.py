@@ -79,6 +79,11 @@ static_dir = Path("static")
 if static_dir.exists():
     app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# TypeRacer static files
+typeracer_dir = Path("typeracer")
+if typeracer_dir.exists():
+    app.mount("/typeracer-static", StaticFiles(directory="typeracer"), name="typeracer-static")
+
 # Pydantic models
 class NotebookRequest(BaseModel):
     description: str
@@ -115,6 +120,11 @@ class DashboardResponse(BaseModel):
 async def root():
     """Serve the main frontend page"""
     return FileResponse('static/index.html')
+
+@app.get("/typeracer")
+async def typeracer():
+    """Serve the typeracer game page"""
+    return FileResponse('typeracer/index.html')
 
 @app.post("/generate", response_model=NotebookResponse)
 async def generate_notebook(request: NotebookRequest):
