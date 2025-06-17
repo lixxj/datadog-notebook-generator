@@ -79,8 +79,10 @@ if static_dir.exists():
 # Pydantic models
 class NotebookRequest(BaseModel):
     description: str
-    author_email: Optional[str] = None
-    author_name: Optional[str] = None
+    metric_names: Optional[str] = None
+    timeframes: Optional[str] = None
+    space_aggregation: Optional[str] = None
+    rollup: Optional[str] = None
     create_in_datadog: bool = False
 
 class NotebookResponse(BaseModel):
@@ -104,17 +106,19 @@ async def generate_notebook(request: NotebookRequest):
         raise HTTPException(status_code=500, detail="Notebook generator not initialized - OpenAI API key missing")
     
     try:
-        # Create author info if provided
-        author_info = None
-        if request.author_email or request.author_name:
-            author_info = {
-                "name": request.author_name or "Unknown",
-                "email": request.author_email or "unknown@example.com",
-                "handle": request.author_email or "unknown@example.com"
-            }
+        # Prepare advanced settings
+        advanced_settings = {}
+        if request.metric_names:
+            advanced_settings["metric_names"] = request.metric_names
+        if request.timeframes:
+            advanced_settings["timeframes"] = request.timeframes
+        if request.space_aggregation:
+            advanced_settings["space_aggregation"] = request.space_aggregation
+        if request.rollup:
+            advanced_settings["rollup"] = request.rollup
         
         # Generate notebook
-        notebook_json = notebook_generator.generate_notebook(request.description, author_info)
+        notebook_json = notebook_generator.generate_notebook(request.description, None, advanced_settings)
         
         # Generate preview
         preview = notebook_generator.preview_notebook(notebook_json)
@@ -135,7 +139,7 @@ async def generate_notebook(request: NotebookRequest):
             if "error" in result:
                 raise HTTPException(status_code=500, detail=f"Failed to create notebook in Datadog: {result['error']}")
             
-            datadog_notebook_id = result.get("data", {}).get("id")
+            datadog_notebook_id = str(result.get("data", {}).get("id", ""))
         
         return NotebookResponse(
             success=True,

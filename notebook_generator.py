@@ -44,19 +44,20 @@ class NotebookGenerator:
                 }
             }
     
-    def generate_notebook(self, user_request: str, author_info: Optional[Dict] = None) -> Dict[str, Any]:
+    def generate_notebook(self, user_request: str, author_info: Optional[Dict] = None, advanced_settings: Optional[Dict] = None) -> Dict[str, Any]:
         """
         Generate a notebook based on user request
         
         Args:
             user_request: Natural language description of what the notebook should contain
-            author_info: Optional author information
+            author_info: Optional author information (deprecated)
+            advanced_settings: Optional advanced settings including metric names, timeframes, rollup, etc.
             
         Returns:
             Dictionary containing the notebook JSON structure
         """
         # Create prompt for LLM
-        prompt = self._create_prompt(user_request)
+        prompt = self._create_prompt(user_request, advanced_settings)
         
         try:
             # Get LLM response
@@ -97,7 +98,7 @@ class NotebookGenerator:
             # Fallback to basic notebook
             return self._create_basic_notebook(user_request, author_info)
     
-    def _create_prompt(self, user_request: str) -> str:
+    def _create_prompt(self, user_request: str, advanced_settings: Optional[Dict] = None) -> str:
         """Create a detailed prompt for the LLM with example notebook structure and real metrics"""
         example_structure = json.dumps(self.example_notebook, indent=2)
         
@@ -106,14 +107,40 @@ class NotebookGenerator:
         
         # Format metrics for the prompt
         metrics_info = []
-        for metric in suggested_metrics[:15]:  # Limit to 15 most relevant
-            metrics_info.append(f"- {metric.name}: {metric.description} (Type: {metric.type}, Unit: {metric.unit_name})")
+        user_specified_metrics = False
         
-        metrics_text = "\n".join(metrics_info) if metrics_info else "No specific metrics found, use general system metrics."
+        # Check if user specified specific metrics
+        if advanced_settings and advanced_settings.get("metric_names"):
+            user_specified_metrics = True
+            user_metrics = [m.strip() for m in advanced_settings["metric_names"].split(",")]
+            metrics_info = [f"- {metric} (USER SPECIFIED - MUST USE THIS EXACT METRIC NAME)" for metric in user_metrics]
+            metrics_text = "USER SPECIFIED METRICS (MUST USE THESE EXACT NAMES):\n" + "\n".join(metrics_info)
+        else:
+            # Use AI-suggested metrics
+            for metric in suggested_metrics[:15]:  # Limit to 15 most relevant
+                metrics_info.append(f"- {metric.name}: {metric.description} (Type: {metric.type}, Unit: {metric.unit_name})")
+            metrics_text = "SUGGESTED METRICS:\n" + ("\n".join(metrics_info) if metrics_info else "No specific metrics found, use general system metrics.")
         
         # Get integration summary
         integrations = self.metrics_loader.get_available_integrations()
         integrations_text = ", ".join(integrations)
+        
+        # Process additional advanced settings
+        advanced_settings_text = ""
+        if advanced_settings:
+            settings_parts = []
+            
+            if advanced_settings.get("timeframes"):
+                settings_parts.append(f"TIMEFRAME: Use {advanced_settings['timeframes']} as the live_span")
+            
+            if advanced_settings.get("space_aggregation"):
+                settings_parts.append(f"SPACE AGGREGATION: Use {advanced_settings['space_aggregation']} aggregation in metric queries (e.g., {advanced_settings['space_aggregation']}:metric_name)")
+            
+            if advanced_settings.get("rollup"):
+                settings_parts.append(f"ROLLUP INTERVAL: Set appropriate rollup interval to {advanced_settings['rollup']}")
+            
+            if settings_parts:
+                advanced_settings_text = f"\nADVANCED SETTINGS PROVIDED BY USER:\n{chr(10).join(settings_parts)}\n"
         
         return f"""
 You are an expert Datadog notebook creator. Create a complete Datadog notebook JSON structure based on this user request: "{user_request}"
@@ -126,7 +153,7 @@ AVAILABLE REAL METRICS FOR THIS REQUEST:
 {metrics_text}
 
 AVAILABLE INTEGRATIONS: {integrations_text}
-
+{advanced_settings_text}
 IMPORTANT: You must return a complete, valid JSON structure that follows this exact format.
 
 Key requirements:
@@ -145,8 +172,9 @@ TIMESERIES CELLS: Use for metric visualizations
 - Set type: "timeseries"
 - Include "requests" array with queries
 - Each request needs: display_type, q (query), style
-- USE THE REAL METRICS PROVIDED ABOVE - choose the most relevant ones for the request
+- USE THE EXACT METRICS PROVIDED ABOVE - if user specified metrics, YOU MUST USE THOSE EXACT METRIC NAMES
 - Format queries as: "avg:metric_name" or "sum:metric_name" etc.
+- CRITICAL: When user specifies metrics like "system.cpu.user", use that EXACT name, not aws.ec2.cpu_utilization
 
 QUERY_VALUE CELLS: Use for single metric displays, KPIs
 - Set type: "query_value" 
@@ -156,7 +184,10 @@ QUERY_VALUE CELLS: Use for single metric displays, KPIs
 Choose an appropriate time range in "time.live_span":
 - "5m", "15m", "1h", "4h", "1d", "2d", "1w" based on the use case
 
-Generate a complete, valid JSON response that directly addresses the user's request with the REAL METRICS provided above. Make sure all cell IDs are unique and use actual metric names from the available metrics list.
+Generate a complete, valid JSON response that directly addresses the user's request with the EXACT METRICS provided above. Make sure all cell IDs are unique and:
+- If USER SPECIFIED METRICS are provided, you MUST use those exact metric names in your queries
+- Do NOT substitute different metrics (e.g., don't use aws.ec2.cpu_utilization when user specified system.cpu.user)
+- Use the exact metric names as provided by the user or suggested by the system
 """
     
     def _extract_cells_from_response(self, llm_response: str, user_request: str) -> List[Dict[str, Any]]:

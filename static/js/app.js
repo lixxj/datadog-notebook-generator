@@ -145,25 +145,26 @@ function restoreSideNavigationState() {
 
 // Example data
 const examples = {
-    support: {
-        description: "Investigate high memory usage on web servers causing timeouts and slow response times. Show memory metrics, CPU usage, and application performance indicators over the last 4 hours to identify patterns and potential memory leaks.",
-        authorName: "Support Engineer",
-        authorEmail: "support@company.com"
+    performance: {
+        description: "Create a comprehensive performance monitoring notebook showing CPU usage, memory consumption, disk I/O, and network metrics for our web application servers. Include response time analysis, error rate tracking, and resource utilization trends over the past 24 hours. Focus on identifying bottlenecks and performance degradation patterns.",
+        metricNames: "system.cpu.user, system.mem.used, system.disk.used, system.net.bytes_rcvd",
+        timeframes: "1d",
+        spaceAggregation: "avg",
+        rollup: "5m"
     },
-    demo: {
-        description: "Demonstrate metric rollup functions with different time windows (5m, 1h, 1d) and aggregation methods (avg, sum, max). Show how different rollup strategies affect data visualization and analysis accuracy.",
-        authorName: "Demo User",
-        authorEmail: "demo@company.com"
+    troubleshooting: {
+        description: "Build a troubleshooting guide notebook for diagnosing application issues including error analysis, log correlation, database performance metrics, and infrastructure health checks. Include automated alerts setup and incident response workflows with step-by-step diagnostic procedures.",
+        metricNames: "system.cpu.system, system.mem.free, system.load.1",
+        timeframes: "4h",
+        spaceAggregation: "max",
+        rollup: "1m"
     },
-    escalation: {
-        description: "Comprehensive analysis of database performance degradation affecting multiple services. Include connection pool metrics, query execution times, disk I/O, and correlation with application error rates over the past 24 hours.",
-        authorName: "SRE Team",
-        authorEmail: "sre@company.com"
-    },
-    prototype: {
-        description: "Quick monitoring setup for new microservice deployment with key performance indicators. Include request rates, response times, error rates, CPU and memory usage, and custom business metrics for a newly deployed payment processing service.",
-        authorName: "DevOps Engineer", 
-        authorEmail: "devops@company.com"
+    capacity: {
+        description: "Design a capacity planning notebook analyzing resource trends, growth patterns, and forecasting future infrastructure needs. Include CPU, memory, storage, and network utilization analysis with predictive modeling for scaling decisions and budget planning.",
+        metricNames: "system.cpu.idle, system.mem.total, system.disk.free",
+        timeframes: "1m",
+        spaceAggregation: "avg",
+        rollup: "1h"
     }
 };
 
@@ -374,8 +375,10 @@ async function handleFormSubmission(event) {
     const formData = new FormData(event.target);
     const requestData = {
         description: formData.get('description'),
-        author_name: formData.get('authorName'),
-        author_email: formData.get('authorEmail'),
+        metric_names: formData.get('metricNames'),
+        timeframes: formData.get('timeframes'),
+        space_aggregation: formData.get('spaceAggregation'),
+        rollup: formData.get('rollup'),
         create_in_datadog: formData.get('createInDatadog') === 'on'
     };
     
@@ -467,11 +470,17 @@ function populateDetailsTab(result) {
     
     if (currentRequestData) {
         details.push({ label: 'Description', value: currentRequestData.description });
-        if (currentRequestData.author_name) {
-            details.push({ label: 'Author', value: currentRequestData.author_name });
+        if (currentRequestData.metric_names) {
+            details.push({ label: 'Specific Metrics', value: currentRequestData.metric_names });
         }
-        if (currentRequestData.author_email) {
-            details.push({ label: 'Email', value: currentRequestData.author_email });
+        if (currentRequestData.timeframes) {
+            details.push({ label: 'Timeframe', value: currentRequestData.timeframes });
+        }
+        if (currentRequestData.space_aggregation) {
+            details.push({ label: 'Space Aggregation', value: currentRequestData.space_aggregation });
+        }
+        if (currentRequestData.rollup) {
+            details.push({ label: 'Rollup', value: currentRequestData.rollup });
         }
         details.push({ label: 'Create in Datadog', value: currentRequestData.create_in_datadog ? 'Yes' : 'No' });
     }
@@ -526,8 +535,20 @@ function fillExample(exampleType) {
     
     // Fill form fields
     document.getElementById('description').value = example.description;
-    document.getElementById('authorName').value = example.authorName;
-    document.getElementById('authorEmail').value = example.authorEmail;
+    
+    // Fill advanced settings if provided
+    if (example.metricNames) {
+        document.getElementById('metricNames').value = example.metricNames;
+    }
+    if (example.timeframes) {
+        document.getElementById('timeframes').value = example.timeframes;
+    }
+    if (example.spaceAggregation) {
+        document.getElementById('spaceAggregation').value = example.spaceAggregation;
+    }
+    if (example.rollup) {
+        document.getElementById('rollup').value = example.rollup;
+    }
     
     // Add visual feedback
     const descriptionField = document.getElementById('description');
