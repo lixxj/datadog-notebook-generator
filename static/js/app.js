@@ -529,14 +529,69 @@ function showTab(tabName) {
     event.target.classList.add('active');
 }
 
-function fillExample(exampleType) {
-    const example = examples[exampleType];
-    if (!example) return;
-    
-    // Fill form fields
+async function fillExample(exampleType) {
+    try {
+        // Fetch example suggestions from the API
+        const response = await fetch(`/examples/${exampleType}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch example suggestions');
+        }
+        
+        const example = await response.json();
+        
+        // Fill form fields
+        document.getElementById('description').value = example.description;
+        
+        // Fill advanced settings
+        if (example.suggested_metrics) {
+            document.getElementById('metricNames').value = example.suggested_metrics.join(', ');
+        }
+        if (example.timeframe) {
+            document.getElementById('timeframes').value = example.timeframe;
+        }
+        if (example.space_aggregation) {
+            document.getElementById('spaceAggregation').value = example.space_aggregation;
+        }
+        if (example.rollup) {
+            document.getElementById('rollup').value = example.rollup;
+        }
+        
+        // Show suggestions modal/tooltip
+        showExampleSuggestions(exampleType, example);
+        
+        // Add visual feedback
+        const descriptionField = document.getElementById('description');
+        descriptionField.style.background = 'rgba(99, 44, 166, 0.05)';
+        setTimeout(() => {
+            descriptionField.style.background = '';
+        }, 1000);
+        
+        // Auto-resize textarea
+        autoResizeTextarea.call(descriptionField);
+        
+        // Focus on description field
+        descriptionField.focus();
+        
+        // Scroll to form
+        document.querySelector('.generator-section').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+        });
+        
+    } catch (error) {
+        console.error('Error loading example:', error);
+        // Fallback to local examples if API fails
+        const localExample = examples[exampleType];
+        if (localExample) {
+            fillLocalExample(localExample);
+        }
+    }
+}
+
+function fillLocalExample(example) {
+    // Fill form fields with local example data (fallback)
     document.getElementById('description').value = example.description;
     
-    // Fill advanced settings if provided
     if (example.metricNames) {
         document.getElementById('metricNames').value = example.metricNames;
     }
@@ -549,25 +604,82 @@ function fillExample(exampleType) {
     if (example.rollup) {
         document.getElementById('rollup').value = example.rollup;
     }
+}
+
+function showExampleSuggestions(exampleType, example) {
+    const modal = document.createElement('div');
+    modal.className = 'suggestions-modal';
+    modal.innerHTML = `
+        <div class="suggestions-modal-content">
+            <div class="suggestions-header">
+                <h3>${getExampleTitle(exampleType)} Suggestions</h3>
+                <button class="suggestions-close" onclick="closeSuggestionsModal()">&times;</button>
+            </div>
+            <div class="suggestions-body">
+                <div class="suggestions-section">
+                    <h4>📊 Suggested Metrics</h4>
+                    <div class="metrics-tags">
+                        ${example.suggested_metrics.map(metric => `
+                            <span class="metric-tag">${metric}</span>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="suggestions-section">
+                    <h4>⚙️ Recommended Settings</h4>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <span class="setting-label">Timeframe:</span>
+                            <span class="setting-value">${example.timeframe}</span>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">Space Aggregation:</span>
+                            <span class="setting-value">${example.space_aggregation}</span>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">Rollup:</span>
+                            <span class="setting-value">${example.rollup}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="suggestions-section">
+                    <h4>💡 Pro Tips</h4>
+                    <ul class="tips-list">
+                        ${example.tips.map(tip => `<li>${tip}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+            <div class="suggestions-footer">
+                <button class="btn btn-primary" onclick="closeSuggestionsModal()">Got it, thanks!</button>
+            </div>
+        </div>
+    `;
     
-    // Add visual feedback
-    const descriptionField = document.getElementById('description');
-    descriptionField.style.background = 'rgba(99, 44, 166, 0.05)';
-    setTimeout(() => {
-        descriptionField.style.background = '';
-    }, 1000);
+    document.body.appendChild(modal);
     
-    // Auto-resize textarea
-    autoResizeTextarea.call(descriptionField);
-    
-    // Focus on description field
-    descriptionField.focus();
-    
-    // Scroll to form
-    document.querySelector('.generator-section').scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
+    // Add event listener to close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeSuggestionsModal();
+        }
     });
+}
+
+function getExampleTitle(exampleType) {
+    const titles = {
+        'performance': '⚡ Performance Analysis',
+        'troubleshooting': '🔧 Troubleshooting Guide',
+        'capacity': '📊 Capacity Planning'
+    };
+    return titles[exampleType] || exampleType;
+}
+
+function closeSuggestionsModal() {
+    const modal = document.querySelector('.suggestions-modal');
+    if (modal) {
+        modal.remove();
+    }
 }
 
 function clearForm() {

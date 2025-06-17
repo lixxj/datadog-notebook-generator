@@ -131,16 +131,16 @@ class NotebookGenerator:
             settings_parts = []
             
             if advanced_settings.get("timeframes"):
-                settings_parts.append(f"TIMEFRAME: Use {advanced_settings['timeframes']} as the live_span")
+                settings_parts.append(f"TIMEFRAME: MUST use {advanced_settings['timeframes']} as the live_span (do not auto-select)")
             
             if advanced_settings.get("space_aggregation"):
-                settings_parts.append(f"SPACE AGGREGATION: Use {advanced_settings['space_aggregation']} aggregation in metric queries (e.g., {advanced_settings['space_aggregation']}:metric_name)")
+                settings_parts.append(f"SPACE AGGREGATION: MUST use {advanced_settings['space_aggregation']} aggregation in all metric queries (format: {advanced_settings['space_aggregation']}:metric_name)")
             
             if advanced_settings.get("rollup"):
-                settings_parts.append(f"ROLLUP INTERVAL: Set appropriate rollup interval to {advanced_settings['rollup']}")
+                settings_parts.append(f"ROLLUP INTERVAL: MUST set rollup interval to {advanced_settings['rollup']} (do not auto-select)")
             
             if settings_parts:
-                advanced_settings_text = f"\nADVANCED SETTINGS PROVIDED BY USER:\n{chr(10).join(settings_parts)}\n"
+                advanced_settings_text = f"\nCRITICAL USER REQUIREMENTS - MUST FOLLOW EXACTLY:\n{chr(10).join(settings_parts)}\nThese settings OVERRIDE any auto-selection logic.\n"
         
         return f"""
 You are an expert Datadog notebook creator. Create a complete Datadog notebook JSON structure based on this user request: "{user_request}"

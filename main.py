@@ -139,7 +139,8 @@ async def generate_notebook(request: NotebookRequest):
             if "error" in result:
                 raise HTTPException(status_code=500, detail=f"Failed to create notebook in Datadog: {result['error']}")
             
-            datadog_notebook_id = str(result.get("data", {}).get("id", ""))
+            notebook_id = result.get("data", {}).get("id")
+            datadog_notebook_id = str(notebook_id) if notebook_id is not None else None
         
         return NotebookResponse(
             success=True,
@@ -223,6 +224,56 @@ async def suggest_metrics(request: Dict[str, str]):
     
     suggested_metrics = notebook_generator.get_suggested_metrics(user_request)
     return {"suggested_metrics": suggested_metrics}
+
+@app.get("/examples/{example_type}")
+async def get_example_suggestions(example_type: str):
+    """Get suggestions for different example types"""
+    examples = {
+        "performance": {
+            "description": "Create a comprehensive performance monitoring notebook showing CPU usage, memory consumption, disk I/O, and network metrics for our web application servers. Include response time analysis, error rate tracking, and resource utilization trends over the past 24 hours. Focus on identifying bottlenecks and performance degradation patterns.",
+            "suggested_metrics": ["system.cpu.user", "system.cpu.system", "system.mem.used", "system.mem.free", "system.disk.used", "system.net.bytes_rcvd", "system.net.bytes_sent"],
+            "timeframe": "1d",
+            "space_aggregation": "avg",
+            "rollup": "5m",
+            "tips": [
+                "Monitor CPU usage patterns to identify peak load times",
+                "Track memory consumption to detect potential memory leaks",
+                "Analyze disk I/O to spot storage bottlenecks",
+                "Compare network traffic with application response times"
+            ]
+        },
+        "troubleshooting": {
+            "description": "Build a troubleshooting guide notebook for diagnosing application issues including error analysis, log correlation, database performance metrics, and infrastructure health checks. Include automated alerts setup and incident response workflows with step-by-step diagnostic procedures.",
+            "suggested_metrics": ["system.cpu.system", "system.mem.free", "system.load.1", "system.load.5", "system.load.15", "system.processes.count"],
+            "timeframe": "4h",
+            "space_aggregation": "max",
+            "rollup": "1m",
+            "tips": [
+                "Use system load averages to understand overall system health",
+                "Monitor process count for application stability",
+                "Track memory availability for resource constraints",
+                "Correlate CPU spikes with application errors"
+            ]
+        },
+        "capacity": {
+            "description": "Design a capacity planning notebook analyzing resource trends, growth patterns, and forecasting future infrastructure needs. Include CPU, memory, storage, and network utilization analysis with predictive modeling for scaling decisions and budget planning.",
+            "suggested_metrics": ["system.cpu.idle", "system.mem.total", "system.mem.usable", "system.disk.free", "system.disk.total"],
+            "timeframe": "1m",
+            "space_aggregation": "avg",
+            "rollup": "1h",
+            "tips": [
+                "Analyze long-term trends for accurate capacity planning",
+                "Monitor resource utilization patterns over weeks/months",
+                "Track growth rates to predict future needs",
+                "Identify seasonal patterns in resource usage"
+            ]
+        }
+    }
+    
+    if example_type not in examples:
+        raise HTTPException(status_code=404, detail="Example type not found")
+    
+    return examples[example_type]
 
 # Run the application
 if __name__ == "__main__":
