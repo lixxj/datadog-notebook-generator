@@ -7,16 +7,20 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import json
 import logging
 import os
 from pathlib import Path
+import uvicorn
+from datetime import datetime
+import asyncio
 
 # Import our custom modules
 from notebook_generator import NotebookGenerator
 from dashboard_generator import DashboardGenerator
 from datadog_client import DatadogClient
+from metric_analysis_service import MetricAnalysisService
 
 # Configuration
 try:
@@ -60,6 +64,7 @@ app.add_middleware(
 notebook_generator = None
 dashboard_generator = None
 datadog_client = None
+metric_analysis_service = None
 
 if OPENAI_API_KEY:
     notebook_generator = NotebookGenerator(OPENAI_API_KEY)
@@ -71,6 +76,11 @@ else:
 if DATADOG_API_KEY and DATADOG_APP_KEY:
     datadog_client = DatadogClient(DATADOG_API_KEY, DATADOG_APP_KEY, DATADOG_BASE_URL)
     logger.info("Datadog client initialized")
+    
+    # Initialize metric analysis service
+    customer_metrics_endpoint = os.getenv("CUSTOMER_METRICS_ENDPOINT")
+    metric_analysis_service = MetricAnalysisService(datadog_client, customer_metrics_endpoint)
+    logger.info("Metric analysis service initialized")
 else:
     logger.warning("Datadog API credentials not provided")
 
@@ -114,6 +124,19 @@ class DashboardResponse(BaseModel):
     dashboard_json: Optional[Dict[str, Any]] = None
     datadog_dashboard_id: Optional[str] = None
     preview: Optional[str] = None
+
+class MetricAnalysisRequest(BaseModel):
+    suggested_metrics: List[Dict[str, Any]]
+    customer_id: Optional[str] = None
+
+class MetricAnalysisResponse(BaseModel):
+    success: bool
+    message: str
+    analysis: Optional[Dict[str, Any]] = None
+    existing_metrics: List[str]
+    missing_metrics: List[Dict[str, Any]]
+    coverage_percentage: float
+    recommendations: List[Dict[str, Any]]
 
 # API Routes
 @app.get("/")
@@ -198,6 +221,99 @@ async def health_check():
         status["datadog_connection"] = connection_test["status"]
     
     return status
+
+# Metric Analysis Endpoints
+@app.post("/metrics/analyze", response_model=MetricAnalysisResponse)
+async def analyze_metrics(request: MetricAnalysisRequest):
+    """Analyze suggested metrics against customer's existing metrics"""
+    
+    if not metric_analysis_service:
+        raise HTTPException(status_code=500, detail="Metric analysis service not initialized - Datadog credentials missing")
+    
+    try:
+        analysis = metric_analysis_service.analyze_metrics(
+            request.suggested_metrics, 
+            request.customer_id
+        )
+        
+        return MetricAnalysisResponse(
+            success=True,
+            message="Metric analysis completed successfully!",
+            analysis={
+                "total_suggested": analysis.total_suggested,
+                "coverage_percentage": analysis.coverage_percentage,
+                "summary": f"{len(analysis.missing_metrics)} missing metrics found out of {analysis.total_suggested} suggested"
+            },
+            existing_metrics=analysis.existing_metrics,
+            missing_metrics=analysis.missing_metrics,
+            coverage_percentage=analysis.coverage_percentage,
+            recommendations=analysis.recommendations
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to analyze metrics: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to analyze metrics: {str(e)}")
+
+@app.get("/metrics/customer/{customer_id}")
+async def get_customer_metrics(customer_id: str):
+    """Get customer's existing metrics"""
+    
+    if not metric_analysis_service:
+        raise HTTPException(status_code=500, detail="Metric analysis service not initialized")
+    
+    try:
+        metrics = metric_analysis_service._get_customer_metrics(customer_id)
+        return {
+            "success": True,
+            "customer_id": customer_id,
+            "metrics": metrics,
+            "count": len(metrics)
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get customer metrics: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get customer metrics: {str(e)}")
+
+@app.get("/integration/{integration_name}/setup")
+async def get_integration_setup(integration_name: str):
+    """Get setup guide for a specific integration"""
+    
+    if not metric_analysis_service:
+        raise HTTPException(status_code=500, detail="Metric analysis service not initialized")
+    
+    try:
+        setup_guide = metric_analysis_service.get_setup_guide(integration_name)
+        return {
+            "success": True,
+            "setup_guide": setup_guide
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get setup guide: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get setup guide: {str(e)}")
+
+@app.get("/integration/{integration_name}/metrics")
+async def get_integration_metrics(integration_name: str):
+    """Get available metrics for a specific integration"""
+    
+    if not datadog_client:
+        raise HTTPException(status_code=500, detail="Datadog client not initialized")
+    
+    try:
+        metrics = datadog_client.get_integration_metrics(integration_name)
+        doc_info = datadog_client.get_integration_documentation(integration_name)
+        
+        return {
+            "success": True,
+            "integration": integration_name,
+            "metrics": metrics,
+            "documentation": doc_info,
+            "count": len(metrics)
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get integration metrics: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get integration metrics: {str(e)}")
 
 @app.get("/notebooks")
 async def list_notebooks(count: int = 5):
@@ -436,7 +552,55 @@ async def generate_preview(request: NotebookRequest):
         logger.error(f"Failed to generate preview: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to generate preview: {str(e)}")
 
+# Add new endpoint for getting integration patterns
+@app.get("/integrations/patterns")
+async def get_integration_patterns():
+    """Get metric patterns from all integration CSV files"""
+    try:
+        patterns = {}
+        metrics_dir = "metrics"
+        
+        if not os.path.exists(metrics_dir):
+            return {"patterns": {}}
+        
+        # Load patterns from CSV files
+        for filename in os.listdir(metrics_dir):
+            if filename.endswith('.csv'):
+                integration_name = filename.replace('_metadata.csv', '').replace('.csv', '')
+                csv_path = os.path.join(metrics_dir, filename)
+                
+                try:
+                    import pandas as pd
+                    df = pd.read_csv(csv_path)
+                    
+                    # Extract unique metric prefixes
+                    metric_names = df['metric_name'].tolist()
+                    prefixes = set()
+                    
+                    for metric in metric_names:
+                        if '.' in metric:
+                            # Get the first two parts for pattern matching
+                            parts = metric.split('.')
+                            if len(parts) >= 2:
+                                prefix = f"{parts[0]}.{parts[1]}"
+                                prefixes.add(prefix)
+                    
+                    patterns[integration_name] = {
+                        'prefixes': list(prefixes),
+                        'metrics': metric_names[:10],  # Sample metrics for reference
+                        'integration': df['integration'].iloc[0] if 'integration' in df.columns else integration_name
+                    }
+                    
+                except Exception as e:
+                    logger.error(f"Failed to load patterns from {filename}: {str(e)}")
+                    continue
+        
+        return {"patterns": patterns}
+        
+    except Exception as e:
+        logger.error(f"Failed to get integration patterns: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Run the application
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT, log_level="debug" if DEBUG else "info") 
