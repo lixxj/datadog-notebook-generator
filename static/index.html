@@ -485,6 +485,153 @@
         </div>
     </div>
 
+    <!-- Live Notebook Preview Section -->
+    <section class="live-preview-section" id="livePreviewSection" style="display: none;">
+        <div class="preview-container">
+            <div class="preview-header">
+                <h3>📓 Live Notebook Preview</h3>
+                <div class="preview-controls">
+                    <button class="btn btn-small btn-outline" onclick="togglePreviewMode()">
+                        <span class="btn-icon">👁️</span>
+                        <span id="previewModeText">Switch to Edit Mode</span>
+                    </button>
+                    <button class="btn btn-small btn-outline" onclick="refreshPreview()">
+                        <span class="btn-icon">🔄</span>
+                        Refresh Preview
+                    </button>
+                    <button class="btn btn-small btn-primary" onclick="savePreviewChanges()">
+                        <span class="btn-icon">💾</span>
+                        Save Changes
+                    </button>
+                    <button class="btn btn-small btn-secondary" onclick="closeLivePreview()">
+                        <span class="btn-icon">✕</span>
+                        Close Preview
+                    </button>
+                </div>
+            </div>
+            
+            <div class="preview-content-wrapper">
+                <!-- Preview Sidebar -->
+                <div class="preview-sidebar">
+                    <div class="preview-outline">
+                        <h4>📋 Notebook Structure</h4>
+                        <div class="outline-list" id="notebookOutline">
+                            <!-- Outline items will be populated dynamically -->
+                        </div>
+                    </div>
+                    
+                    <div class="preview-metadata">
+                        <h4>📊 Metadata</h4>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Title:</span>
+                            <span class="metadata-value" id="previewTitle">-</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Cells:</span>
+                            <span class="metadata-value" id="previewCellCount">-</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Type:</span>
+                            <span class="metadata-value" id="previewType">-</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Status:</span>
+                            <span class="metadata-value status" id="previewStatus">Not Generated</span>
+                        </div>
+                    </div>
+
+                    <div class="preview-actions">
+                        <h4>⚡ Quick Actions</h4>
+                        <button class="action-btn" onclick="addTextCell()">
+                            <span>📝</span>
+                            Add Text Cell
+                        </button>
+                        <button class="action-btn" onclick="addQueryCell()">
+                            <span>📊</span>
+                            Add Query Cell
+                        </button>
+                        <button class="action-btn" onclick="addVisualizationCell()">
+                            <span>📈</span>
+                            Add Visualization
+                        </button>
+                        <button class="action-btn" onclick="duplicateCell()">
+                            <span>📋</span>
+                            Duplicate Selected
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Preview Area -->
+                <div class="preview-main">
+                    <div class="preview-toolbar">
+                        <div class="toolbar-section">
+                            <span class="toolbar-label">View Mode:</span>
+                            <div class="mode-toggle">
+                                <button class="mode-btn active" data-mode="preview" onclick="setPreviewMode('preview')">
+                                    <span>👁️</span>
+                                    Preview
+                                </button>
+                                <button class="mode-btn" data-mode="edit" onclick="setPreviewMode('edit')">
+                                    <span>✏️</span>
+                                    Edit
+                                </button>
+                                <button class="mode-btn" data-mode="split" onclick="setPreviewMode('split')">
+                                    <span>⚡</span>
+                                    Split
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="toolbar-section">
+                            <span class="toolbar-label">Zoom:</span>
+                            <div class="zoom-controls">
+                                <button class="zoom-btn" onclick="adjustZoom(-0.1)">-</button>
+                                <span class="zoom-level" id="zoomLevel">100%</span>
+                                <button class="zoom-btn" onclick="adjustZoom(0.1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="preview-viewport" id="previewViewport">
+                        <div class="notebook-preview" id="notebookPreview">
+                            <!-- Preview Mode Content -->
+                            <div class="preview-mode-content" id="previewModeContent">
+                                <div class="empty-preview">
+                                    <div class="empty-icon">📓</div>
+                                    <h4>No Notebook Generated Yet</h4>
+                                    <p>Generate a notebook above to see the live preview here</p>
+                                    <button class="btn btn-primary" onclick="scrollToGenerator()">
+                                        <span class="btn-icon">🚀</span>
+                                        Generate Notebook
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Edit Mode Content -->
+                            <div class="edit-mode-content" id="editModeContent" style="display: none;">
+                                <div class="cell-editor" id="cellEditor">
+                                    <!-- Editable cells will be rendered here -->
+                                </div>
+                            </div>
+
+                            <!-- Split Mode Content -->
+                            <div class="split-mode-content" id="splitModeContent" style="display: none;">
+                                <div class="split-left">
+                                    <h5>📝 Editor</h5>
+                                    <div class="split-editor" id="splitEditor"></div>
+                                </div>
+                                <div class="split-right">
+                                    <h5>👁️ Preview</h5>
+                                    <div class="split-preview" id="splitPreview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Enhanced Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div class="loading-content">
@@ -571,6 +718,11 @@
                     e.preventDefault();
                     document.getElementById('generateBtn').click();
                 }
+                
+                // Escape to close live preview
+                if (e.key === 'Escape') {
+                    closeLivePreview();
+                }
             });
         }
 
@@ -634,6 +786,110 @@
                 tooltip.remove();
             }
         }
+
+        // Enhance the existing handleGenerationSuccess function to add Live Preview button
+        const originalHandleGenerationSuccess = window.handleGenerationSuccess;
+        
+        window.handleGenerationSuccess = function(result, mode = 'notebook') {
+            // Call the original function if it exists
+            if (originalHandleGenerationSuccess) {
+                originalHandleGenerationSuccess(result, mode);
+            }
+            
+            // Add Live Preview button for notebooks only
+            if (mode === 'notebook' && result.notebook_json) {
+                setTimeout(() => {
+                    const resultsActions = document.querySelector('.results-actions');
+                    if (resultsActions) {
+                        // Check if Live Preview button already exists
+                        const existingBtn = resultsActions.querySelector('.live-preview-btn');
+                        if (!existingBtn) {
+                            const previewBtn = document.createElement('button');
+                            previewBtn.className = 'btn btn-small btn-primary live-preview-btn';
+                            previewBtn.innerHTML = `
+                                <span class="btn-icon">👁️</span>
+                                Live Preview
+                            `;
+                            previewBtn.onclick = () => showLivePreview(result.notebook_json);
+                            resultsActions.insertBefore(previewBtn, resultsActions.firstChild);
+                        }
+                    }
+                    
+                    // Also add a floating action button
+                    addFloatingPreviewButton(result.notebook_json);
+                    
+                    // Show preview automatically if enabled
+                    if (localStorage.getItem('autoShowPreview') === 'true') {
+                        setTimeout(() => showLivePreview(result.notebook_json), 1000);
+                    }
+                }, 100);
+            }
+        };
+        
+        // Add floating preview button
+        function addFloatingPreviewButton(notebookData) {
+            // Remove existing floating button
+            const existingFloating = document.querySelector('.floating-preview-btn');
+            if (existingFloating) {
+                existingFloating.remove();
+            }
+            
+            const floatingBtn = document.createElement('div');
+            floatingBtn.className = 'floating-preview-btn';
+            floatingBtn.innerHTML = `
+                <button class="btn btn-primary" onclick="showLivePreview(window.lastNotebookData)" title="Open Live Preview">
+                    <span class="btn-icon">👁️</span>
+                    <span>Live Preview</span>
+                </button>
+            `;
+            floatingBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 1000;
+                animation: slideInFromRight 0.5s ease-out;
+                box-shadow: var(--shadow-xl);
+                border-radius: var(--border-radius-lg);
+            `;
+            
+            document.body.appendChild(floatingBtn);
+            window.lastNotebookData = notebookData;
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                if (floatingBtn.parentNode) {
+                    floatingBtn.style.animation = 'slideOutToRight 0.5s ease-in';
+                    setTimeout(() => floatingBtn.remove(), 500);
+                }
+            }, 10000);
+        }
+        
+        // Add CSS for floating button animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInFromRight {
+                from { transform: translateX(100px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOutToRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100px); opacity: 0; }
+            }
+            
+            .floating-preview-btn {
+                backdrop-filter: blur(10px);
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: var(--border-radius-lg);
+                padding: var(--space-2);
+            }
+            
+            .floating-preview-btn .btn {
+                margin: 0;
+                box-shadow: none;
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html> 

@@ -988,29 +988,926 @@ Built with ❤️ for better monitoring and observability.
 }
 
 function showHelp() {
-    const helpMessage = `
-📚 Help & Tips
+    alert(`📚 Datadog AI Generator Help
 
-Getting Started:
-1. Describe your monitoring needs in detail
-2. Include specific metrics, timeframes, and use cases
-3. Optionally provide your name and email
-4. Choose whether to create directly in Datadog
+🔧 Quick Actions:
+• Cmd/Ctrl + K: Quick search
+• Cmd/Ctrl + Enter: Generate content
+• Esc: Close modals
 
-Tips for Better Results:
-• Be specific about what you want to monitor
-• Mention timeframes (e.g., "last 24 hours")
-• Include context about your infrastructure
-• Specify if you need alerts or thresholds
+💡 Tips:
+• Be specific about metrics and timeframes
+• Use advanced settings for precise control
+• Enable "Create in Datadog" for direct deployment
+• Check system status in top-right corner
 
-Keyboard Shortcuts:
-• Ctrl/Cmd + B: Toggle sidebar
-• Escape: Close mobile menu
+📖 For more help, visit our documentation.`);
+}
 
-Need more help? Visit the Datadog documentation or contact support.
+// ====================================
+// Enhanced Live Notebook Preview Functionality
+// ====================================
+
+let currentPreviewData = null;
+let currentPreviewMode = 'preview';
+let currentZoomLevel = 1.0;
+let selectedCellIndex = -1;
+let isPreviewDirty = false;
+
+function showLivePreview(notebookData) {
+    /**
+     * Show the live preview section with notebook data
+     * Enhanced to work with actual Datadog notebook structure
+     */
+    // Transform Datadog notebook structure to preview format
+    currentPreviewData = transformNotebookData(notebookData);
+    
+    const previewSection = document.getElementById('livePreviewSection');
+    if (previewSection) {
+        previewSection.style.display = 'block';
+        previewSection.classList.add('visible');
+        
+        // Populate preview content
+        updatePreviewContent();
+        updatePreviewSidebar();
+        
+        // Show the preview controls
+        showPreviewControls();
+        
+        // Smooth scroll to preview
+        setTimeout(() => {
+            previewSection.scrollIntoView({ behavior: 'smooth' });
+            showToast('📓 Live preview activated! You can now edit and see changes in real-time.', 'success');
+        }, 300);
+    }
+}
+
+function transformNotebookData(datadogNotebook) {
+    /**
+     * Transform Datadog notebook structure to our preview format
+     */
+    try {
+        const attrs = datadogNotebook.data?.attributes || datadogNotebook.attributes || datadogNotebook;
+        
+        if (!attrs) {
+            throw new Error('Invalid notebook structure');
+        }
+        
+        const cells = (attrs.cells || []).map((cell, index) => {
+            const definition = cell.attributes?.definition || cell.definition || cell;
+            
+            return {
+                id: cell.id || `cell_${index}`,
+                cell_type: definition.type || 'markdown',
+                content: definition.text || definition.query || definition.requests?.[0]?.q || '',
+                metadata: {
+                    title: definition.title || '',
+                    display_type: definition.display_type || definition.requests?.[0]?.display_type || 'line',
+                    viz_type: definition.type || 'markdown'
+                },
+                definition: definition
+            };
+        });
+        
+        return {
+            name: attrs.name || 'Generated Notebook',
+            description: `Time Range: ${attrs.time?.live_span || '1h'} | Status: ${attrs.status || 'published'}`,
+            cells: cells,
+            metadata: {
+                cell_count: cells.length,
+                time_range: attrs.time?.live_span || '1h',
+                status: attrs.status || 'published',
+                type: attrs.metadata?.type || 'investigation'
+            },
+            original: datadogNotebook
+        };
+    } catch (error) {
+        console.error('Error transforming notebook data:', error);
+        return {
+            name: 'Generated Notebook',
+            description: 'Preview data transformation failed',
+            cells: [],
+            metadata: {
+                cell_count: 0,
+                status: 'error'
+            }
+        };
+    }
+}
+
+function showPreviewControls() {
+    /**
+     * Show and initialize preview controls
+     */
+    const controls = document.querySelector('.preview-controls');
+    if (controls) {
+        // Update mode text
+        updatePreviewModeText();
+        
+        // Add real-time update toggle
+        if (!controls.querySelector('.realtime-toggle')) {
+            const realtimeToggle = document.createElement('button');
+            realtimeToggle.className = 'btn btn-small btn-outline realtime-toggle';
+            realtimeToggle.innerHTML = `
+                <span class="btn-icon">⚡</span>
+                <span>Real-time Updates</span>
+            `;
+            realtimeToggle.onclick = toggleRealtimeUpdates;
+            controls.insertBefore(realtimeToggle, controls.firstChild);
+        }
+    }
+}
+
+function updatePreviewModeText() {
+    const modeText = document.getElementById('previewModeText');
+    if (modeText) {
+        switch (currentPreviewMode) {
+            case 'preview':
+                modeText.textContent = 'Switch to Edit Mode';
+                break;
+            case 'edit':
+                modeText.textContent = 'Switch to Split Mode';
+                break;
+            case 'split':
+                modeText.textContent = 'Switch to Preview Mode';
+                break;
+        }
+    }
+}
+
+function toggleRealtimeUpdates() {
+    /**
+     * Toggle real-time updates for the preview
+     */
+    const toggle = document.querySelector('.realtime-toggle');
+    const isActive = toggle.classList.contains('active');
+    
+    if (isActive) {
+        toggle.classList.remove('active');
+        toggle.querySelector('span:last-child').textContent = 'Real-time Updates';
+        showToast('Real-time updates disabled', 'info');
+    } else {
+        toggle.classList.add('active');
+        toggle.querySelector('span:last-child').textContent = 'Updates Active';
+        showToast('Real-time updates enabled', 'success');
+        
+        // Start watching for changes
+        startRealtimeUpdates();
+    }
+}
+
+function startRealtimeUpdates() {
+    /**
+     * Start monitoring for changes and update preview
+     */
+    if (window.realtimeUpdateInterval) {
+        clearInterval(window.realtimeUpdateInterval);
+    }
+    
+    window.realtimeUpdateInterval = setInterval(() => {
+        if (isPreviewDirty) {
+            updatePreviewContent();
+            updatePreviewSidebar();
+            isPreviewDirty = false;
+        }
+    }, 1000); // Update every second if changes detected
+}
+
+function markPreviewDirty() {
+    /**
+     * Mark preview as needing update
+     */
+    isPreviewDirty = true;
+}
+
+function closeLivePreview() {
+    /**
+     * Close the live preview section
+     */
+    const previewSection = document.getElementById('livePreviewSection');
+    if (previewSection) {
+        previewSection.classList.remove('visible');
+        setTimeout(() => {
+            previewSection.style.display = 'none';
+        }, 300);
+    }
+    
+    // Clean up real-time updates
+    if (window.realtimeUpdateInterval) {
+        clearInterval(window.realtimeUpdateInterval);
+        window.realtimeUpdateInterval = null;
+    }
+    
+    showToast('Live preview closed', 'info');
+}
+
+function updatePreviewContent() {
+    /**
+     * Update the main preview content based on current mode
+     */
+    if (!currentPreviewData) return;
+    
+    const previewModeContent = document.getElementById('previewModeContent');
+    const editModeContent = document.getElementById('editModeContent');
+    const splitModeContent = document.getElementById('splitModeContent');
+    
+    // Hide all content areas
+    previewModeContent.style.display = 'none';
+    editModeContent.style.display = 'none';
+    splitModeContent.style.display = 'none';
+    
+    switch (currentPreviewMode) {
+        case 'preview':
+            previewModeContent.style.display = 'block';
+            renderPreviewMode();
+            break;
+        case 'edit':
+            editModeContent.style.display = 'block';
+            renderEditMode();
+            break;
+        case 'split':
+            splitModeContent.style.display = 'block';
+            renderSplitMode();
+            break;
+    }
+}
+
+function renderPreviewMode() {
+    /**
+     * Render the preview mode content
+     */
+    const content = document.getElementById('previewModeContent');
+    
+    if (!currentPreviewData || !currentPreviewData.cells) {
+        content.innerHTML = `
+            <div class="empty-preview">
+                <div class="empty-icon">📓</div>
+                <h4>No Cells to Preview</h4>
+                <p>The notebook doesn't contain any cells to display</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const cellsHtml = currentPreviewData.cells.map((cell, index) => {
+        return renderNotebookCell(cell, index);
+    }).join('');
+    
+    content.innerHTML = `
+        <div class="notebook-cells">
+            <div class="notebook-header">
+                <h2>${currentPreviewData.name || 'Generated Notebook'}</h2>
+                ${currentPreviewData.description ? `<p class="notebook-description">${currentPreviewData.description}</p>` : ''}
+            </div>
+            ${cellsHtml}
+        </div>
     `;
     
-    alert(helpMessage);
+    // Add click handlers for cell selection
+    content.querySelectorAll('.notebook-cell').forEach((cell, index) => {
+        cell.addEventListener('click', () => selectCell(index));
+    });
+}
+
+function renderNotebookCell(cell, index) {
+    /**
+     * Render a single notebook cell with enhanced Datadog support
+     */
+    const cellTypeIcon = getCellTypeIcon(cell.cell_type);
+    const cellTypeName = getCellTypeName(cell.cell_type);
+    
+    let cellContent = '';
+    
+    switch (cell.cell_type) {
+        case 'markdown':
+            cellContent = `
+                <div class="cell-markdown">
+                    ${formatMarkdown(cell.content)}
+                </div>
+            `;
+            break;
+        case 'timeseries':
+            const queries = cell.definition?.requests || [];
+            cellContent = `
+                <div class="cell-timeseries">
+                    <div class="timeseries-header">
+                        <h4>📈 Time Series Visualization</h4>
+                        ${cell.metadata?.title ? `<p class="chart-title">${cell.metadata.title}</p>` : ''}
+                    </div>
+                    <div class="timeseries-queries">
+                        ${queries.map(req => `
+                            <div class="query-item">
+                                <code>${escapeHtml(req.q || req.query || 'No query')}</code>
+                                <span class="query-meta">${req.display_type || 'line'}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="chart-placeholder">
+                        📊 Chart would render here with query results
+                    </div>
+                </div>
+            `;
+            break;
+        case 'query_value':
+            cellContent = `
+                <div class="cell-query-value">
+                    <div class="query-value-header">
+                        <h4>🔢 Query Value</h4>
+                    </div>
+                    <div class="query-display">
+                        <code>${escapeHtml(cell.content)}</code>
+                    </div>
+                    <div class="value-placeholder">
+                        📊 Current value would display here
+                    </div>
+                </div>
+            `;
+            break;
+        case 'log_stream':
+            cellContent = `
+                <div class="cell-log-stream">
+                    <div class="log-stream-header">
+                        <h4>📝 Log Stream</h4>
+                    </div>
+                    <div class="log-query">
+                        <code>${escapeHtml(cell.content)}</code>
+                    </div>
+                    <div class="log-placeholder">
+                        📄 Log entries would stream here
+                    </div>
+                </div>
+            `;
+            break;
+        default:
+            cellContent = `
+                <div class="cell-content">
+                    <div class="content-text">${escapeHtml(cell.content || 'Empty cell')}</div>
+                    ${cell.metadata?.display_type ? `<small class="content-meta">Type: ${cell.metadata.display_type}</small>` : ''}
+                </div>
+            `;
+    }
+    
+    return `
+        <div class="notebook-cell ${selectedCellIndex === index ? 'selected' : ''}" 
+             data-cell-index="${index}" 
+             data-cell-type="${cell.cell_type}">
+            <div class="cell-header">
+                <div class="cell-type">
+                    <span class="cell-type-icon">${cellTypeIcon}</span>
+                    <span class="cell-type-name">${cellTypeName}</span>
+                    <span class="cell-index">#${index + 1}</span>
+                </div>
+                <div class="cell-actions">
+                    <button class="cell-action-btn" onclick="editCell(${index})" title="Edit cell">
+                        ✏️
+                    </button>
+                    <button class="cell-action-btn" onclick="moveCell(${index}, 'up')" title="Move up" ${index === 0 ? 'disabled' : ''}>
+                        ⬆️
+                    </button>
+                    <button class="cell-action-btn" onclick="moveCell(${index}, 'down')" title="Move down">
+                        ⬇️
+                    </button>
+                    <button class="cell-action-btn" onclick="duplicateCell(${index})" title="Duplicate cell">
+                        📋
+                    </button>
+                    <button class="cell-action-btn" onclick="deleteCell(${index})" title="Delete cell">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+            <div class="cell-content">
+                ${cellContent}
+            </div>
+        </div>
+    `;
+}
+
+function renderEditMode() {
+    /**
+     * Render the edit mode content
+     */
+    const content = document.getElementById('editModeContent');
+    
+    if (!currentPreviewData || !currentPreviewData.cells) {
+        content.innerHTML = `
+            <div class="empty-preview">
+                <div class="empty-icon">✏️</div>
+                <h4>No Cells to Edit</h4>
+                <p>Add some cells to start editing</p>
+                <button class="btn btn-primary" onclick="addTextCell()">
+                    <span class="btn-icon">📝</span>
+                    Add Text Cell
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    const editableHtml = currentPreviewData.cells.map((cell, index) => {
+        return `
+            <div class="editable-cell" data-cell-index="${index}">
+                <div class="cell-header">
+                    <div class="cell-type">
+                        <span>${getCellTypeIcon(cell.cell_type)}</span>
+                        <select onchange="changeCellType(${index}, this.value)">
+                            <option value="text" ${cell.cell_type === 'text' ? 'selected' : ''}>Text</option>
+                            <option value="query" ${cell.cell_type === 'query' ? 'selected' : ''}>Query</option>
+                            <option value="visualization" ${cell.cell_type === 'visualization' ? 'selected' : ''}>Visualization</option>
+                        </select>
+                    </div>
+                    <div class="cell-actions">
+                        <button class="cell-action-btn" onclick="moveCell(${index}, -1)" title="Move up">⬆️</button>
+                        <button class="cell-action-btn" onclick="moveCell(${index}, 1)" title="Move down">⬇️</button>
+                        <button class="cell-action-btn" onclick="deleteCell(${index})" title="Delete">🗑️</button>
+                    </div>
+                </div>
+                <textarea class="cell-editor-textarea" 
+                         onchange="updateCellContent(${index}, this.value)"
+                         placeholder="Enter cell content...">${escapeHtml(cell.content || '')}</textarea>
+            </div>
+        `;
+    }).join('');
+    
+    content.innerHTML = `
+        <div class="cell-editor">
+            ${editableHtml}
+            <button class="btn btn-outline" onclick="addTextCell()" style="margin-top: 1rem;">
+                <span class="btn-icon">➕</span>
+                Add New Cell
+            </button>
+        </div>
+    `;
+}
+
+function renderSplitMode() {
+    /**
+     * Render the split mode content
+     */
+    const content = document.getElementById('splitModeContent');
+    
+    content.innerHTML = `
+        <div class="split-left">
+            <h5>📝 Editor</h5>
+            <div class="split-editor" id="splitEditor">
+                <!-- Editor content will be rendered here -->
+            </div>
+        </div>
+        <div class="split-right">
+            <h5>👁️ Preview</h5>
+            <div class="split-preview" id="splitPreview">
+                <!-- Preview content will be rendered here -->
+            </div>
+        </div>
+    `;
+    
+    // Render editor and preview separately
+    const editor = document.getElementById('splitEditor');
+    const preview = document.getElementById('splitPreview');
+    
+    if (currentPreviewData && currentPreviewData.cells) {
+        // Render simplified editor
+        editor.innerHTML = currentPreviewData.cells.map((cell, index) => `
+            <div class="simple-cell-editor" style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <strong>${getCellTypeName(cell.cell_type)}</strong>
+                    <button onclick="selectCell(${index})" class="btn btn-small">Select</button>
+                </div>
+                <textarea onchange="updateCellContent(${index}, this.value)" 
+                         style="width: 100%; min-height: 80px; font-family: monospace;">${escapeHtml(cell.content || '')}</textarea>
+            </div>
+        `).join('');
+        
+        // Render simplified preview
+        preview.innerHTML = currentPreviewData.cells.map(cell => {
+            switch (cell.cell_type) {
+                case 'text':
+                case 'markdown':
+                    return `<div style="margin-bottom: 1rem; padding: 1rem; border: 1px solid #e5e9ec; border-radius: 8px;">${formatMarkdown(cell.content)}</div>`;
+                case 'query':
+                    return `<div style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; font-family: monospace;">${escapeHtml(cell.content)}</div>`;
+                default:
+                    return `<div style="margin-bottom: 1rem; padding: 1rem; border: 1px solid #e5e9ec; border-radius: 8px;">${escapeHtml(cell.content || '')}</div>`;
+            }
+        }).join('');
+    }
+}
+
+function updatePreviewSidebar() {
+    /**
+     * Update the preview sidebar with enhanced notebook metadata and outline
+     */
+    if (!currentPreviewData) return;
+    
+    // Update metadata with enhanced information
+    const metadata = currentPreviewData.metadata || {};
+    
+    document.getElementById('previewTitle').textContent = currentPreviewData.name || 'Untitled Notebook';
+    document.getElementById('previewCellCount').textContent = metadata.cell_count || (currentPreviewData.cells ? currentPreviewData.cells.length : 0);
+    document.getElementById('previewType').textContent = metadata.type || 'investigation';
+    
+    const statusElement = document.getElementById('previewStatus');
+    if (statusElement) {
+        statusElement.textContent = metadata.status || 'draft';
+        statusElement.className = `metadata-value status ${metadata.status || 'draft'}`;
+    }
+    
+    // Add time range metadata if not already present
+    const metadataContainer = document.querySelector('.preview-metadata');
+    if (metadataContainer && !metadataContainer.querySelector('.metadata-time-range')) {
+        const timeRangeElement = document.createElement('div');
+        timeRangeElement.className = 'metadata-item metadata-time-range';
+        timeRangeElement.innerHTML = `
+            <span class="metadata-label">Time Range:</span>
+            <span class="metadata-value">${metadata.time_range || '1h'}</span>
+        `;
+        metadataContainer.insertBefore(timeRangeElement, metadataContainer.lastElementChild);
+    }
+    
+    // Update outline with enhanced cell information
+    const outlineList = document.getElementById('notebookOutline');
+    if (outlineList) {
+        if (currentPreviewData.cells && currentPreviewData.cells.length > 0) {
+            const outlineItems = currentPreviewData.cells.map((cell, index) => {
+                const title = getCellTitle(cell);
+                const typeIcon = getCellTypeIcon(cell.cell_type);
+                const typeName = getCellTypeName(cell.cell_type);
+                
+                return `
+                    <div class="outline-item ${selectedCellIndex === index ? 'active' : ''}" 
+                         onclick="selectCell(${index})"
+                         data-cell-index="${index}"
+                         title="${typeName}: ${title}">
+                        <span class="outline-item-type">${typeIcon}</span>
+                        <span class="outline-item-title">${title}</span>
+                        <span class="outline-item-index">#${index + 1}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            outlineList.innerHTML = outlineItems;
+        } else {
+            outlineList.innerHTML = `
+                <div class="outline-item empty">
+                    <span class="outline-item-type">📄</span>
+                    <span class="outline-item-title">No cells available</span>
+                </div>
+            `;
+        }
+    }
+    
+    // Update cell count in Quick Actions section
+    const quickActions = document.querySelector('.preview-actions');
+    if (quickActions && !quickActions.querySelector('.cell-count-display')) {
+        const cellCountDisplay = document.createElement('div');
+        cellCountDisplay.className = 'cell-count-display';
+        cellCountDisplay.innerHTML = `
+            <div class="count-item">
+                <span class="count-label">📊 Charts:</span>
+                <span class="count-value">${(currentPreviewData.cells || []).filter(cell => cell.cell_type === 'timeseries').length}</span>
+            </div>
+            <div class="count-item">
+                <span class="count-label">📝 Text:</span>
+                <span class="count-value">${(currentPreviewData.cells || []).filter(cell => cell.cell_type === 'markdown').length}</span>
+            </div>
+        `;
+        quickActions.insertBefore(cellCountDisplay, quickActions.firstChild);
+    }
+}
+
+// Helper functions for rendering
+function getCellTypeIcon(cellType) {
+    const icons = {
+        'text': '📝',
+        'markdown': '📝',
+        'query': '🔍',
+        'visualization': '📊',
+        'code': '💻',
+        'timeseries': '📈',
+        'query_value': '🔢',
+        'log_stream': '📝',
+        'distribution': '📊',
+        'hostmap': '🗺️',
+        'change': '🔄',
+        'image': '🖼️'
+    };
+    return icons[cellType] || '📄';
+}
+
+function getCellTypeName(cellType) {
+    const names = {
+        'text': 'Text',
+        'markdown': 'Markdown',
+        'query': 'Query',
+        'visualization': 'Visualization',
+        'code': 'Code',
+        'timeseries': 'Time Series',
+        'query_value': 'Query Value',
+        'log_stream': 'Log Stream',
+        'distribution': 'Distribution',
+        'hostmap': 'Host Map',
+        'change': 'Change',
+        'image': 'Image'
+    };
+    return names[cellType] || 'Unknown';
+}
+
+function getCellTitle(cell) {
+    if (!cell.content) return 'Empty Cell';
+    
+    // Extract first line or meaningful title
+    const firstLine = cell.content.split('\n')[0].trim();
+    if (firstLine.length > 40) {
+        return firstLine.substring(0, 40) + '...';
+    }
+    return firstLine || 'Empty Cell';
+}
+
+function formatMarkdown(content) {
+    if (!content) return '';
+    
+    // Simple markdown formatting
+    return content
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/\n/g, '<br>');
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Preview control functions
+function setPreviewMode(mode) {
+    currentPreviewMode = mode;
+    
+    // Update active button
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.mode === mode) {
+            btn.classList.add('active');
+        }
+    });
+    
+    updatePreviewContent();
+}
+
+function togglePreviewMode() {
+    const modes = ['preview', 'edit', 'split'];
+    const currentIndex = modes.indexOf(currentPreviewMode);
+    const nextMode = modes[(currentIndex + 1) % modes.length];
+    setPreviewMode(nextMode);
+    
+    // Update button text
+    const modeText = document.getElementById('previewModeText');
+    if (modeText) {
+        modeText.textContent = `Switch to ${modes[(modes.indexOf(nextMode) + 1) % modes.length]} Mode`;
+    }
+}
+
+function adjustZoom(delta) {
+    currentZoomLevel = Math.max(0.5, Math.min(2.0, currentZoomLevel + delta));
+    
+    const viewport = document.getElementById('previewViewport');
+    if (viewport) {
+        viewport.style.transform = `scale(${currentZoomLevel})`;
+        viewport.style.transformOrigin = 'top left';
+    }
+    
+    document.getElementById('zoomLevel').textContent = `${Math.round(currentZoomLevel * 100)}%`;
+}
+
+function refreshPreview() {
+    updatePreviewContent();
+    updatePreviewSidebar();
+    showToast('Preview refreshed', 'success');
+}
+
+function savePreviewChanges() {
+    if (currentPreviewData) {
+        // In a real implementation, this would save to the backend
+        showToast('Changes saved locally', 'success');
+        console.log('Saving preview changes:', currentPreviewData);
+    }
+}
+
+// Cell manipulation functions
+function selectCell(index) {
+    selectedCellIndex = index;
+    updatePreviewContent();
+    updatePreviewSidebar();
+}
+
+function addTextCell() {
+    if (!currentPreviewData) {
+        currentPreviewData = { cells: [] };
+    }
+    if (!currentPreviewData.cells) {
+        currentPreviewData.cells = [];
+    }
+    
+    const newCell = {
+        cell_type: 'text',
+        content: 'New text cell...'
+    };
+    
+    currentPreviewData.cells.push(newCell);
+    selectedCellIndex = currentPreviewData.cells.length - 1;
+    
+    updatePreviewContent();
+    updatePreviewSidebar();
+    showToast('Text cell added', 'success');
+}
+
+function addQueryCell() {
+    if (!currentPreviewData) {
+        currentPreviewData = { cells: [] };
+    }
+    if (!currentPreviewData.cells) {
+        currentPreviewData.cells = [];
+    }
+    
+    const newCell = {
+        cell_type: 'query',
+        content: 'avg:system.cpu.user{*}'
+    };
+    
+    currentPreviewData.cells.push(newCell);
+    selectedCellIndex = currentPreviewData.cells.length - 1;
+    
+    updatePreviewContent();
+    updatePreviewSidebar();
+    showToast('Query cell added', 'success');
+}
+
+function addVisualizationCell() {
+    if (!currentPreviewData) {
+        currentPreviewData = { cells: [] };
+    }
+    if (!currentPreviewData.cells) {
+        currentPreviewData.cells = [];
+    }
+    
+    const newCell = {
+        cell_type: 'visualization',
+        content: 'Visualization cell',
+        graph_definition: {
+            title: 'New Visualization',
+            viz_type: 'timeseries'
+        }
+    };
+    
+    currentPreviewData.cells.push(newCell);
+    selectedCellIndex = currentPreviewData.cells.length - 1;
+    
+    updatePreviewContent();
+    updatePreviewSidebar();
+    showToast('Visualization cell added', 'success');
+}
+
+function duplicateCell(index) {
+    if (!currentPreviewData || !currentPreviewData.cells || index < 0 || index >= currentPreviewData.cells.length) {
+        return;
+    }
+    
+    const cellToDuplicate = { ...currentPreviewData.cells[index] };
+    currentPreviewData.cells.splice(index + 1, 0, cellToDuplicate);
+    selectedCellIndex = index + 1;
+    
+    updatePreviewContent();
+    updatePreviewSidebar();
+    showToast('Cell duplicated', 'success');
+}
+
+function deleteCell(index) {
+    if (!currentPreviewData || !currentPreviewData.cells || index < 0 || index >= currentPreviewData.cells.length) {
+        return;
+    }
+    
+    if (confirm('Are you sure you want to delete this cell?')) {
+        currentPreviewData.cells.splice(index, 1);
+        if (selectedCellIndex >= index) {
+            selectedCellIndex = Math.max(-1, selectedCellIndex - 1);
+        }
+        
+        updatePreviewContent();
+        updatePreviewSidebar();
+        showToast('Cell deleted', 'warning');
+    }
+}
+
+function editCell(index) {
+    selectCell(index);
+    setPreviewMode('edit');
+}
+
+function updateCellContent(index, newContent) {
+    if (!currentPreviewData || !currentPreviewData.cells || index < 0 || index >= currentPreviewData.cells.length) {
+        return;
+    }
+    
+    currentPreviewData.cells[index].content = newContent;
+    
+    // Update preview if in split mode
+    if (currentPreviewMode === 'split') {
+        renderSplitMode();
+    }
+}
+
+function changeCellType(index, newType) {
+    if (!currentPreviewData || !currentPreviewData.cells || index < 0 || index >= currentPreviewData.cells.length) {
+        return;
+    }
+    
+    currentPreviewData.cells[index].cell_type = newType;
+    updatePreviewContent();
+    updatePreviewSidebar();
+    showToast(`Cell type changed to ${getCellTypeName(newType)}`, 'info');
+}
+
+function moveCell(index, direction) {
+    if (!currentPreviewData || !currentPreviewData.cells || index < 0 || index >= currentPreviewData.cells.length) {
+        return;
+    }
+    
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= currentPreviewData.cells.length) {
+        return;
+    }
+    
+    // Swap cells
+    const temp = currentPreviewData.cells[index];
+    currentPreviewData.cells[index] = currentPreviewData.cells[newIndex];
+    currentPreviewData.cells[newIndex] = temp;
+    
+    selectedCellIndex = newIndex;
+    
+    updatePreviewContent();
+    updatePreviewSidebar();
+    showToast('Cell moved', 'info');
+}
+
+function scrollToGenerator() {
+    const generatorSection = document.querySelector('.generator-section');
+    if (generatorSection) {
+        generatorSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <div class="toast-header">
+            <span class="toast-title">${message}</span>
+            <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 3000);
+}
+
+// Integrate preview with existing notebook generation
+function enhanceHandleGenerationSuccess(originalFunction) {
+    return function(result, mode = 'notebook') {
+        // Call original function
+        originalFunction.call(this, result, mode);
+        
+        // Show live preview for notebooks only
+        if (mode === 'notebook' && result.notebook_json) {
+            // Add a button to show live preview
+            const resultsActions = document.querySelector('.results-actions');
+            if (resultsActions) {
+                const previewBtn = document.createElement('button');
+                previewBtn.className = 'btn btn-small btn-primary';
+                previewBtn.innerHTML = `
+                    <span class="btn-icon">👁️</span>
+                    Live Preview
+                `;
+                previewBtn.onclick = () => showLivePreview(result.notebook_json);
+                resultsActions.appendChild(previewBtn);
+            }
+        }
+    };
+}
+
+// Override the original function
+if (typeof handleGenerationSuccess !== 'undefined') {
+    handleGenerationSuccess = enhanceHandleGenerationSuccess(handleGenerationSuccess);
 }
 
 // Add some helpful console messages

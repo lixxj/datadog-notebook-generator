@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeRacer Game</title>
+    <link rel="stylesheet" href="/typeracer-static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Back to main app button -->
+        <div class="back-nav">
+            <a href="/" class="back-btn">
+                <span class="back-icon">←</span>
+                <span>Back to Datadog AI</span>
+            </a>
+        </div>
+        
+        <div class="header">
+            <h1>⚡ Jett's TypeRacer Arena ⚡</h1>
+            <p class="subtitle">Lightning-fast typing with Jett's precision</p>
+        </div>
+        
+        <div class="sentence-container">
+            <div class="challenge-label">
+                <span class="lightning">⚡</span>
+                <span>Jett's Challenge</span>
+                <span class="lightning">⚡</span>
+            </div>
+            <p id="sentence" class="sentence">The quick brown fox jumps over the lazy dog.</p>
+        </div>
+        
+        <div class="input-container">
+            <div class="input-label">
+                <span class="speed-icon">🏃‍♂️</span>
+                <span>Show Jett your speed!</span>
+            </div>
+            <input type="text" id="typing-input" placeholder="Type at the speed of light..." autocomplete="off" spellcheck="false">
+        </div>
+        
+        <div class="race-track">
+            <div class="track"></div>
+            <div class="car" id="car">
+                <div class="mazda-mx5">
+                    <div class="car-body">
+                        <div class="windshield"></div>
+                        <div class="hood"></div>
+                        <div class="side-vent"></div>
+                        <div class="wheel front-wheel"></div>
+                        <div class="wheel rear-wheel"></div>
+                    </div>
+                </div>
+                <div class="driver-name">Jett's Mazda</div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-info">
+                    <div class="stat-label">Jett Speed</div>
+                    <div class="stat-value"><span id="wpm">0</span> WPM</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-info">
+                    <div class="stat-label">Mission Progress</div>
+                    <div class="stat-value"><span id="progress">0%</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="completion-message" class="completion-message hidden">
+            <div class="victory-content">
+                <h2>⚡ JETT SPEED ACHIEVED! ⚡</h2>
+                <p class="victory-text">Lightning reflexes! You've mastered Jett's precision!</p>
+                <div class="final-stats">
+                    <span class="final-wpm">Final Speed: <span id="final-wpm">0</span> WPM</span>
+                </div>
+                <button onclick="resetGame()" class="race-again-btn">
+                    <span class="btn-icon">🏁</span>
+                    Another Lightning Round
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/typeracer-static/script.js"></script>
+</body>
+</html> 

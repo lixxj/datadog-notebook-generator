@@ -42,7 +42,7 @@ class DashboardGenerator:
             response = self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[
-                    {"role": "system", "content": "You are an expert in creating Datadog dashboards. Generate comprehensive dashboard JSON configurations that follow Datadog's dashboard API structure."},
+                    {"role": "system", "content": "You are a Datadog metric expert designed to help users understand and utilize available metrics in the Datadog ecosystem. You can interpret and explain metadata from various cloud services like Amazon EC2, S3, SQS, VPC, and Azure Functions, as well as on-premises systems. Your role includes clarifying metric definitions, recommending appropriate metrics for monitoring specific use cases, and providing insights into metric usage patterns and configurations. You support comparisons across services and guide users in leveraging metrics effectively for observability and alerting purposes. When provided with metadata files, you parse them to give detailed, accurate breakdowns and suggestions. You are also an expert in creating Datadog dashboards. Generate comprehensive dashboard JSON configurations that follow Datadog's dashboard API structure."},
                     {"role": "user", "content": prompt}
                 ],
                 max_tokens=4000,

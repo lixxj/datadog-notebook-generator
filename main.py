@@ -385,6 +385,47 @@ async def validate_dashboard(dashboard_data: Dict[str, Any]):
     validation = datadog_client.validate_dashboard_structure(dashboard_data)
     return validation
 
+@app.post("/preview")
+async def generate_preview(request: NotebookRequest):
+    """Generate a preview of the notebook without creating it in Datadog"""
+    
+    if not notebook_generator:
+        raise HTTPException(status_code=500, detail="Notebook generator not initialized - OpenAI API key missing")
+    
+    try:
+        # Prepare advanced settings
+        advanced_settings = {}
+        if request.metric_names:
+            advanced_settings["metric_names"] = request.metric_names
+        if request.timeframes:
+            advanced_settings["timeframes"] = request.timeframes
+        if request.space_aggregation:
+            advanced_settings["space_aggregation"] = request.space_aggregation
+        if request.rollup:
+            advanced_settings["rollup"] = request.rollup
+        
+        # Generate notebook for preview only
+        notebook_json = notebook_generator.generate_notebook(request.description, None, advanced_settings)
+        
+        # Generate text preview
+        preview = notebook_generator.preview_notebook(notebook_json)
+        
+        return {
+            "success": True,
+            "message": "Preview generated successfully!",
+            "notebook_json": notebook_json,
+            "preview": preview,
+            "live_preview_data": {
+                "cells_count": len(notebook_json.get("data", {}).get("attributes", {}).get("cells", [])),
+                "time_range": notebook_json.get("data", {}).get("attributes", {}).get("time", {}).get("live_span", "1h"),
+                "status": "preview"
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to generate preview: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate preview: {str(e)}")
+
 # Run the application
 if __name__ == "__main__":
     import uvicorn
