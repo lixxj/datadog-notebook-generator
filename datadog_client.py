@@ -20,7 +20,8 @@ class DatadogClient:
         self.session.headers.update({
             'DD-API-KEY': self.api_key,
             'DD-APPLICATION-KEY': self.app_key,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         })
     
     def create_notebook(self, notebook_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -567,4 +568,241 @@ class DatadogClient:
                 "valid": False,
                 "errors": [f"Validation error: {str(e)}"],
                 "warnings": warnings
-            } 
+            }
+
+    def get_metrics_metadata(self, metric_name: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Get metrics metadata from Datadog
+        
+        Args:
+            metric_name: Optional specific metric name to get metadata for
+            
+        Returns:
+            Metrics metadata or error information
+        """
+        url = f"{self.base_url}/api/v1/metrics"
+        
+        params = {}
+        if metric_name:
+            params["filter"] = metric_name
+        
+        try:
+            response = self.session.get(url, params=params)
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to get metrics metadata: {str(e)}")
+            return {"error": str(e), "status_code": getattr(e.response, 'status_code', None)}
+
+    def get_active_metrics(self, from_timestamp: Optional[int] = None, 
+                          host: Optional[str] = None, tag_filter: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Get list of actively reporting metrics using Datadog API v2
+        
+        Args:
+            from_timestamp: Start timestamp for active metrics
+            host: Filter by host
+            tag_filter: Filter by tags
+            
+        Returns:
+            List of active metrics or error information
+        """
+        url = f"{self.base_url}/api/v2/metrics"
+        
+        params = {}
+        if from_timestamp:
+            params["from"] = from_timestamp
+        if host:
+            params["host"] = host
+        if tag_filter:
+            params["filter"] = tag_filter
+        
+        try:
+            response = self.session.get(url, params=params)
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to get active metrics: {str(e)}")
+            return {"error": str(e), "status_code": getattr(e.response, 'status_code', None)}
+
+    def query_metrics(self, query: str, from_timestamp: int, to_timestamp: int) -> Dict[str, Any]:
+        """
+        Query metrics data
+        
+        Args:
+            query: Metric query string
+            from_timestamp: Start timestamp
+            to_timestamp: End timestamp
+            
+        Returns:
+            Query results or error information
+        """
+        url = f"{self.base_url}/api/v1/query"
+        
+        params = {
+            "query": query,
+            "from": from_timestamp,
+            "to": to_timestamp
+        }
+        
+        try:
+            response = self.session.get(url, params=params)
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Failed to query metrics: {str(e)}")
+            return {"error": str(e), "status_code": getattr(e.response, 'status_code', None)}
+
+    def get_integration_metrics(self, integration_name: str) -> List[str]:
+        """
+        Get list of metrics for a specific integration
+        
+        Args:
+            integration_name: Name of the integration (e.g., 'aws', 'nginx', 'mysql')
+            
+        Returns:
+            List of metric names for the integration
+        """
+        # This is a mapping of common integrations to their typical metrics
+        # In a real implementation, this could be fetched from Datadog's documentation API
+        integration_metrics = {
+            "aws": [
+                "aws.ec2.cpuutilization",
+                "aws.ec2.diskreadbytes", 
+                "aws.ec2.diskwritebytes",
+                "aws.ec2.networkin",
+                "aws.ec2.networkout",
+                "aws.rds.cpuutilization",
+                "aws.rds.database_connections",
+                "aws.elb.request_count",
+                "aws.elb.latency"
+            ],
+            "nginx": [
+                "nginx.net.connections",
+                "nginx.net.conn_opened_per_s",
+                "nginx.net.conn_dropped_per_s",
+                "nginx.net.request_per_s",
+                "nginx.net.reading",
+                "nginx.net.writing",
+                "nginx.net.waiting"
+            ],
+            "mysql": [
+                "mysql.performance.queries",
+                "mysql.performance.questions",
+                "mysql.performance.slow_queries",
+                "mysql.performance.com_select",
+                "mysql.performance.com_insert",
+                "mysql.performance.com_update",
+                "mysql.performance.com_delete",
+                "mysql.innodb.buffer_pool_utilization",
+                "mysql.innodb.current_row_locks"
+            ],
+            "redis": [
+                "redis.info.connected_clients",
+                "redis.info.used_memory",
+                "redis.info.used_memory_rss", 
+                "redis.info.mem_fragmentation_ratio",
+                "redis.net.commands_processed",
+                "redis.info.keyspace_hits",
+                "redis.info.keyspace_misses",
+                "redis.info.evicted_keys"
+            ],
+            "postgresql": [
+                "postgresql.connections",
+                "postgresql.commits",
+                "postgresql.rollbacks",
+                "postgresql.disk_read",
+                "postgresql.buffer_hit",
+                "postgresql.rows_returned",
+                "postgresql.rows_fetched",
+                "postgresql.rows_inserted",
+                "postgresql.rows_updated",
+                "postgresql.rows_deleted"
+            ]
+        }
+        
+        return integration_metrics.get(integration_name.lower(), [])
+
+    def get_integration_documentation(self, integration_name: str, metric_name: str = None) -> Dict[str, str]:
+        """
+        Get documentation links for setting up integrations and metrics
+        
+        Args:
+            integration_name: Name of the integration
+            metric_name: Optional specific metric name
+            
+        Returns:
+            Dictionary with documentation links and setup instructions
+        """
+        base_docs_url = "https://docs.datadoghq.com/integrations"
+        
+        # Documentation mapping for common integrations
+        integration_docs = {
+            "aws": {
+                "setup_url": f"{base_docs_url}/amazon_web_services/",
+                "metrics_url": f"{base_docs_url}/amazon_ec2/#metrics",
+                "description": "Set up AWS integration to monitor EC2, RDS, ELB and other AWS services",
+                "setup_steps": [
+                    "Configure AWS IAM role with required permissions",
+                    "Add AWS account to Datadog AWS integration",
+                    "Enable specific AWS services you want to monitor"
+                ]
+            },
+            "nginx": {
+                "setup_url": f"{base_docs_url}/nginx/",
+                "metrics_url": f"{base_docs_url}/nginx/#metrics",
+                "description": "Configure Nginx integration to monitor web server performance",
+                "setup_steps": [
+                    "Enable nginx status module",
+                    "Configure nginx.conf with status endpoint", 
+                    "Install and configure Datadog agent",
+                    "Update nginx.yaml configuration file"
+                ]
+            },
+            "mysql": {
+                "setup_url": f"{base_docs_url}/mysql/",
+                "metrics_url": f"{base_docs_url}/mysql/#metrics",
+                "description": "Set up MySQL integration for database monitoring",
+                "setup_steps": [
+                    "Create MySQL user for Datadog agent",
+                    "Grant required permissions to the user",
+                    "Configure mysql.yaml in agent configuration",
+                    "Restart Datadog agent"
+                ]
+            },
+            "redis": {
+                "setup_url": f"{base_docs_url}/redisdb/",
+                "metrics_url": f"{base_docs_url}/redisdb/#metrics", 
+                "description": "Configure Redis integration for cache monitoring",
+                "setup_steps": [
+                    "Verify Redis INFO command access",
+                    "Configure redisdb.yaml in agent configuration",
+                    "Set up authentication if Redis requires it",
+                    "Restart Datadog agent"
+                ]
+            },
+            "postgresql": {
+                "setup_url": f"{base_docs_url}/postgres/",
+                "metrics_url": f"{base_docs_url}/postgres/#metrics",
+                "description": "Set up PostgreSQL integration for database monitoring", 
+                "setup_steps": [
+                    "Create PostgreSQL user for Datadog agent",
+                    "Grant required permissions and access to pg_stat_* views",
+                    "Configure postgres.yaml in agent configuration",
+                    "Restart Datadog agent"
+                ]
+            }
+        }
+        
+        return integration_docs.get(integration_name.lower(), {
+            "setup_url": f"{base_docs_url}/{integration_name.lower()}/",
+            "description": f"Set up {integration_name} integration",
+            "setup_steps": [
+                "Check Datadog documentation for specific setup instructions",
+                "Configure integration in Datadog agent",
+                "Restart agent after configuration"
+            ]
+        }) 

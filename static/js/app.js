@@ -2,6 +2,32 @@
 let currentNotebookData = null;
 let currentRequestData = null;
 
+// Global variable to store integration patterns
+let integrationPatterns = {};
+
+// Load integration patterns on app initialization
+async function loadIntegrationPatterns() {
+    try {
+        const response = await fetch('/integrations/patterns');
+        const data = await response.json();
+        integrationPatterns = data.patterns || {};
+        console.log('Loaded integration patterns:', Object.keys(integrationPatterns));
+    } catch (error) {
+        console.error('Failed to load integration patterns:', error);
+        // Fallback to basic patterns if loading fails
+        integrationPatterns = {
+            system: { prefixes: ['system.'] },
+            azure_vm: { prefixes: ['azure.vm'] },
+            aws: { prefixes: ['aws.'] },
+            nginx: { prefixes: ['nginx.'] },
+            mysql: { prefixes: ['mysql.'] },
+            redis: { prefixes: ['redis.'] },
+            docker: { prefixes: ['docker.'] },
+            kubernetes: { prefixes: ['kubernetes.'] }
+        };
+    }
+}
+
 // DOM elements
 const notebookForm = document.getElementById('notebookForm');
 const generateBtn = document.getElementById('generateBtn');
@@ -192,6 +218,9 @@ function initializeApp() {
     if (descriptionField) {
         descriptionField.focus();
     }
+    
+    // Load dynamic integration patterns
+    loadIntegrationPatterns();
 }
 
 function setupEventListeners() {
@@ -1910,8 +1939,492 @@ if (typeof handleGenerationSuccess !== 'undefined') {
     handleGenerationSuccess = enhanceHandleGenerationSuccess(handleGenerationSuccess);
 }
 
+// Metric Analysis Functions
+async function analyzeGeneratedMetrics(result, mode = 'notebook') {
+    const analysisContent = document.getElementById('analysisContent');
+    if (!analysisContent) return;
+
+    try {
+        // Show loading state
+        showAnalysisLoading();
+        
+        // Extract metrics from the generated content
+        const suggestedMetrics = extractMetricsFromResult(result, mode);
+        
+        if (suggestedMetrics.length === 0) {
+            showEmptyAnalysis();
+            return;
+        }
+
+        // Call the metric analysis API
+        const response = await fetch('/metrics/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                suggested_metrics: suggestedMetrics,
+                customer_id: 'current_user' // Can be made dynamic
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Analysis failed: ${response.statusText}`);
+        }
+
+        const analysisResult = await response.json();
+        displayMetricAnalysis(analysisResult);
+
+    } catch (error) {
+        console.error('Metric analysis failed:', error);
+        showAnalysisError(error.message);
+    }
+}
+
+function extractMetricsFromResult(result, mode) {
+    const suggestedMetrics = [];
+    const content = mode === 'notebook' ? result.notebook_json : result.dashboard_json;
+    
+    if (!content) return suggestedMetrics;
+
+    try {
+        // Extract metrics from notebook cells or dashboard widgets
+        if (mode === 'notebook' && content.data?.attributes?.cells) {
+            content.data.attributes.cells.forEach(cell => {
+                if (cell.definition?.requests) {
+                    cell.definition.requests.forEach(request => {
+                        if (request.queries) {
+                            request.queries.forEach(query => {
+                                if (query.metric) {
+                                    suggestedMetrics.push({
+                                        metric_name: query.metric,
+                                        type: 'gauge', // Default type
+                                        description: `Metric from ${cell.type || 'query'} cell`
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        } else if (mode === 'dashboard' && content.widgets) {
+            content.widgets.forEach(widget => {
+                if (widget.definition?.requests) {
+                    widget.definition.requests.forEach(request => {
+                        if (request.queries) {
+                            request.queries.forEach(query => {
+                                if (query.metric) {
+                                    suggestedMetrics.push({
+                                        metric_name: query.metric,
+                                        type: widget.definition.type || 'gauge',
+                                        description: `Metric from ${widget.definition.title || 'widget'}`
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // Also try to extract from a simpler structure using dynamic patterns
+        if (suggestedMetrics.length === 0) {
+            // Look for metric names in the content as strings using loaded patterns
+            const contentStr = JSON.stringify(content);
+            
+            // Build regex patterns from loaded integration patterns
+            const metricPatterns = [];
+            Object.values(integrationPatterns).forEach(integration => {
+                if (integration.prefixes) {
+                    integration.prefixes.forEach(prefix => {
+                        // Escape dots and create pattern for prefix + any additional parts
+                        const escapedPrefix = prefix.replace(/\./g, '\\.');
+                        metricPatterns.push(new RegExp(`${escapedPrefix}\\.\\w+(?:\\.\\w+)*`, 'g'));
+                    });
+                }
+            });
+            
+            // If no patterns loaded, use fallback patterns
+            if (metricPatterns.length === 0) {
+                metricPatterns.push(
+                    /system\.\w+\.\w+/g,
+                    /aws\.\w+\.\w+/g,
+                    /azure\.vm\.\w+/g,
+                    /azure\.\w+\.\w+/g,
+                    /nginx\.\w+\.\w+/g,
+                    /mysql\.\w+\.\w+/g,
+                    /redis\.\w+\.\w+/g,
+                    /docker\.\w+\.\w+/g,
+                    /kubernetes\.\w+\.\w+/g
+                );
+            }
+            
+            metricPatterns.forEach(pattern => {
+                const matches = contentStr.match(pattern);
+                if (matches) {
+                    matches.forEach(match => {
+                        if (!suggestedMetrics.find(m => m.metric_name === match)) {
+                            suggestedMetrics.push({
+                                metric_name: match,
+                                type: 'gauge',
+                                description: `Detected metric in generated content`
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // Remove duplicates
+        const uniqueMetrics = suggestedMetrics.filter((metric, index, self) =>
+            index === self.findIndex(m => m.metric_name === metric.metric_name)
+        );
+
+        return uniqueMetrics;
+    } catch (error) {
+        console.error('Failed to extract metrics:', error);
+        return [];
+    }
+}
+
+function showAnalysisLoading() {
+    const analysisContent = document.getElementById('analysisContent');
+    analysisContent.innerHTML = `
+        <div class="loading-analysis">
+            <div class="analysis-spinner"></div>
+            <h4>🔍 Analyzing Metrics</h4>
+            <p>Checking which metrics exist in your Datadog account...</p>
+        </div>
+    `;
+}
+
+function showEmptyAnalysis() {
+    const analysisContent = document.getElementById('analysisContent');
+    analysisContent.innerHTML = `
+        <div class="empty-analysis">
+            <div class="empty-analysis-icon">📊</div>
+            <h4>No Metrics to Analyze</h4>
+            <p>Generate a notebook or dashboard first to see metric analysis.</p>
+        </div>
+    `;
+}
+
+function showAnalysisError(message) {
+    const analysisContent = document.getElementById('analysisContent');
+    analysisContent.innerHTML = `
+        <div class="empty-analysis">
+            <div class="empty-analysis-icon">❌</div>
+            <h4>Analysis Failed</h4>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+function displayMetricAnalysis(analysisResult) {
+    const analysisContent = document.getElementById('analysisContent');
+    
+    const coveragePercentage = analysisResult.coverage_percentage || 0;
+    const existingMetrics = analysisResult.existing_metrics || [];
+    const missingMetrics = analysisResult.missing_metrics || [];
+    const recommendations = analysisResult.recommendations || [];
+    
+    // Group existing metrics by integration
+    const groupedExistingMetrics = groupMetricsByIntegration(existingMetrics);
+    
+    analysisContent.innerHTML = `
+        <div class="metric-analysis-header">
+            <h3>🔍 Metric Coverage Analysis</h3>
+            <p>Analysis of suggested metrics against your Datadog account</p>
+        </div>
+
+        <div class="analysis-summary">
+            <div class="coverage-stats">
+                <div class="coverage-stat">
+                    <span class="coverage-stat-number coverage-percentage">${coveragePercentage.toFixed(1)}%</span>
+                    <span class="coverage-stat-label">Coverage</span>
+                </div>
+                <div class="coverage-stat">
+                    <span class="coverage-stat-number">${existingMetrics.length}</span>
+                    <span class="coverage-stat-label">Available</span>
+                </div>
+                <div class="coverage-stat">
+                    <span class="coverage-stat-number">${missingMetrics.length}</span>
+                    <span class="coverage-stat-label">Missing</span>
+                </div>
+                <div class="coverage-stat">
+                    <span class="coverage-stat-number">${Object.keys(groupedExistingMetrics).length}</span>
+                    <span class="coverage-stat-label">Integrations</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-sections">
+            <div class="metrics-section existing">
+                <h4>
+                    <span>✅</span>
+                    Available Metrics by Integration (${existingMetrics.length} total)
+                </h4>
+                <div class="integration-groups">
+                    ${Object.keys(groupedExistingMetrics).length > 0 ? Object.entries(groupedExistingMetrics).map(([integration, metrics]) => `
+                        <div class="integration-group">
+                            <div class="integration-header" onclick="toggleIntegrationGroup('existing-${integration}')">
+                                <div class="integration-info">
+                                    <span class="integration-icon">${getIntegrationIcon(integration)}</span>
+                                    <span class="integration-name">${getIntegrationDisplayName(integration)}</span>
+                                    <span class="integration-count">(${metrics.length} metrics)</span>
+                                </div>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="integration-metrics" id="existing-${integration}" style="display: none;">
+                                ${metrics.map(metric => `
+                                    <div class="analysis-metric-item existing">
+                                        <div class="metric-info">
+                                            <div class="metric-name-display">${metric}</div>
+                                        </div>
+                                        <div class="metric-status">
+                                            <span class="status-indicator-metric exists">Available</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('') : '<p style="color: var(--text-secondary); text-align: center; padding: var(--space-4);">No existing metrics found</p>'}
+                </div>
+            </div>
+
+            <div class="metrics-section missing">
+                <h4>
+                    <span>❌</span>
+                    Missing Metrics (${missingMetrics.length})
+                </h4>
+                <div class="analysis-metric-list">
+                    ${missingMetrics.length > 0 ? missingMetrics.map(metric => `
+                        <div class="analysis-metric-item missing">
+                            <div class="metric-info">
+                                <div class="metric-name-display">${metric.metric_name}</div>
+                                <div class="metric-description">${metric.description || ''}</div>
+                            </div>
+                            <div class="metric-status">
+                                <span class="status-indicator-metric missing">Missing</span>
+                                <span class="priority-badge ${metric.priority}">${metric.priority}</span>
+                            </div>
+                        </div>
+                    `).join('') : '<p style="color: var(--text-secondary); text-align: center; padding: var(--space-4);">All metrics are available! 🎉</p>'}
+                </div>
+            </div>
+        </div>
+
+        ${recommendations.length > 0 ? `
+            <div class="recommendations-section">
+                <h4>
+                    <span>🛠️</span>
+                    Setup Recommendations
+                </h4>
+                <div class="recommendation-list">
+                    ${recommendations.map(rec => `
+                        <div class="recommendation-item">
+                            <div class="recommendation-header">
+                                <div class="integration-name">${rec.integration}</div>
+                                <div class="recommendation-metrics">
+                                    <span class="metrics-count">${rec.missing_metrics_count} metrics</span>
+                                    <span class="priority-badge ${rec.priority}">${rec.priority} priority</span>
+                                </div>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-3);">
+                                ${rec.description || `Set up ${rec.integration} integration to monitor ${rec.missing_metrics_count} missing metrics`}
+                            </p>
+                            <div class="recommendation-actions">
+                                <a href="${rec.setup_url || '#'}" target="_blank" class="setup-btn">
+                                    <span>🚀</span>
+                                    Setup Guide
+                                </a>
+                                <button class="docs-btn" onclick="showIntegrationDetails('${rec.integration}')">
+                                    <span>📚</span>
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        ` : ''}
+    `;
+}
+
+function groupMetricsByIntegration(metrics) {
+    const grouped = {};
+    
+    metrics.forEach(metric => {
+        const integration = detectMetricIntegration(metric);
+        if (!grouped[integration]) {
+            grouped[integration] = [];
+        }
+        grouped[integration].push(metric);
+    });
+    
+    // Sort metrics within each integration
+    Object.keys(grouped).forEach(integration => {
+        grouped[integration].sort();
+    });
+    
+    return grouped;
+}
+
+function detectMetricIntegration(metricName) {
+    const metric = metricName.toLowerCase();
+    
+    // Use the loaded integration patterns if available
+    if (integrationPatterns && Object.keys(integrationPatterns).length > 0) {
+        for (const [integrationKey, patternInfo] of Object.entries(integrationPatterns)) {
+            const prefixes = patternInfo.prefixes || [];
+            for (const prefix of prefixes) {
+                if (metric.startsWith(prefix.toLowerCase())) {
+                    return integrationKey;
+                }
+            }
+        }
+    }
+    
+    // Fallback to basic pattern matching
+    if (metric.startsWith('azure.vm')) return 'azure_vm';
+    if (metric.startsWith('azure.')) return 'azure';
+    if (metric.startsWith('aws.')) return 'aws';
+    if (metric.startsWith('system.')) return 'system';
+    if (metric.startsWith('nginx.')) return 'nginx';
+    if (metric.startsWith('mysql.')) return 'mysql';
+    if (metric.startsWith('redis.')) return 'redis';
+    if (metric.startsWith('docker.')) return 'docker';
+    if (metric.startsWith('kubernetes.')) return 'kubernetes';
+    
+    return 'other';
+}
+
+function getIntegrationIcon(integration) {
+    const icons = {
+        'azure_vm': '☁️',
+        'azure': '🔵',
+        'aws': '🟠',
+        'amazon_ec2': '🟠',
+        'amazon_s3': '🪣',
+        'amazon_sqs': '📬',
+        'amazon_vpc': '🌐',
+        'system': '🖥️',
+        'nginx': '🌐',
+        'mysql': '🐬',
+        'redis': '🔴',
+        'docker': '🐳',
+        'kubernetes': '⚙️',
+        'other': '📊'
+    };
+    return icons[integration] || '📊';
+}
+
+function getIntegrationDisplayName(integration) {
+    const names = {
+        'azure_vm': 'Azure VM',
+        'azure': 'Azure',
+        'aws': 'AWS',
+        'amazon_ec2': 'Amazon EC2',
+        'amazon_s3': 'Amazon S3',
+        'amazon_sqs': 'Amazon SQS',
+        'amazon_vpc': 'Amazon VPC',
+        'azure_functions': 'Azure Functions',
+        'system': 'System',
+        'nginx': 'NGINX',
+        'mysql': 'MySQL',
+        'redis': 'Redis',
+        'docker': 'Docker',
+        'kubernetes': 'Kubernetes',
+        'other': 'Other'
+    };
+    return names[integration] || integration.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function toggleIntegrationGroup(groupId) {
+    const group = document.getElementById(groupId);
+    const header = group.previousElementSibling;
+    const toggleIcon = header.querySelector('.toggle-icon');
+    
+    if (group.style.display === 'none') {
+        group.style.display = 'block';
+        toggleIcon.textContent = '▲';
+        header.classList.add('expanded');
+    } else {
+        group.style.display = 'none';
+        toggleIcon.textContent = '▼';
+        header.classList.remove('expanded');
+    }
+}
+
+async function showIntegrationDetails(integrationName) {
+    try {
+        const response = await fetch(`/integration/${integrationName}/setup`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch integration details');
+        }
+        
+        const result = await response.json();
+        const setupGuide = result.setup_guide;
+        
+        // Create a simple alert/modal for now (can be enhanced later)
+        const details = `
+Integration: ${integrationName.toUpperCase()}
+Description: ${setupGuide.description}
+Estimated Time: ${setupGuide.estimated_setup_time}
+
+Setup Steps:
+${setupGuide.setup_steps.map((step, i) => `${i + 1}. ${step}`).join('\n')}
+
+Available Metrics: ${setupGuide.available_metrics.length} total
+First 10: ${setupGuide.available_metrics.slice(0, 10).join(', ')}${setupGuide.available_metrics.length > 10 ? '...' : ''}
+
+Documentation: ${setupGuide.setup_url}
+        `;
+        
+        alert(details);
+        
+    } catch (error) {
+        console.error('Failed to show integration details:', error);
+        showToast('Failed to load integration details', 'error');
+    }
+}
+
+// Enhanced generation success handler to include metric analysis
+function enhanceHandleGenerationSuccessWithAnalysis(originalFunction) {
+    return function(result, mode = 'notebook') {
+        // Call the original function first
+        originalFunction.call(this, result, mode);
+        
+        // Add metric analysis
+        setTimeout(() => {
+            analyzeGeneratedMetrics(result, mode);
+        }, 1000); // Delay to ensure tabs are ready
+        
+        // Show live preview for notebooks only
+        if (mode === 'notebook' && result.notebook_json) {
+            const resultsActions = document.querySelector('.results-actions');
+            if (resultsActions && !resultsActions.querySelector('.live-preview-btn')) {
+                const previewBtn = document.createElement('button');
+                previewBtn.className = 'btn btn-small btn-primary live-preview-btn';
+                previewBtn.innerHTML = `
+                    <span class="btn-icon">👁️</span>
+                    Live Preview
+                `;
+                previewBtn.onclick = () => showLivePreview(result.notebook_json);
+                resultsActions.appendChild(previewBtn);
+            }
+        }
+    };
+}
+
+// Override the enhanced function
+if (typeof handleGenerationSuccess !== 'undefined') {
+    handleGenerationSuccess = enhanceHandleGenerationSuccessWithAnalysis(handleGenerationSuccess);
+}
+
 // Add some helpful console messages
 console.log('🐕 Datadog Notebook Generator');
 console.log('💡 Use Ctrl/Cmd + Enter to quickly generate notebooks');
 console.log('⚡ Click example cards to quickly fill the form');
-console.log('🔧 Check the console for any errors or issues'); 
+console.log('🔧 Check the console for any errors or issues');
+console.log('📊 Metric analysis will show after generation'); 
