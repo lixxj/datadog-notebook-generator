@@ -1,74 +1,116 @@
-/* CSS Variables for Datadog-inspired theming */
+/* 🚀 CYBERPUNK JETT-INSPIRED DATADOG AI GENERATOR 🚀 */
+/* Featuring neon aesthetics, futuristic design, and Valorant Jett-inspired elements */
+
+/* Import cyberpunk fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
 :root {
-    /* Datadog purple scheme */
-    --dd-purple-primary: #632ca6;
-    --dd-purple-dark: #4a1d79;
-    --dd-purple-light: #7d4bc7;
-    --dd-purple-lighter: #a683d4;
-    --dd-purple-ultra-light: #f4f1fc;
+    /* 🎨 CYBERPUNK COLOR PALETTE */
+    /* Jett's signature colors */
+    --jett-cyan: #00d4ff;
+    --jett-cyan-glow: rgba(0, 212, 255, 0.3);
+    --jett-dark-blue: #0a1628;
+    --jett-electric: #00ffff;
     
-    /* Datadog accent colors */
-    --dd-orange: #ff6600;
-    --dd-blue: #00a3e0;
-    --dd-green: #00d924;
-    --dd-red: #ff5555;
-    --dd-yellow: #ffcc00;
+    /* Neon accent colors */
+    --neon-pink: #ff6b9d;
+    --neon-purple: #c471ed;
+    --neon-orange: #ff7f50;
+    --neon-green: #39ff14;
+    --neon-yellow: #ffff00;
     
-    /* Text colors */
-    --text-primary: #1c2b34;
-    --text-secondary: #74818a;
-    --text-tertiary: #a2abb4;
-    --text-inverse: #ffffff;
-    --text-accent: var(--dd-purple-primary);
+    /* Dark cyberpunk backgrounds */
+    --cyber-dark: #0f0f23;
+    --cyber-darker: #0a0a1a;
+    --cyber-navy: #1a1a2e;
+    --cyber-purple: #16213e;
+    --cyber-deep: #0f3460;
+    --cyber-void: #000000;
     
-    /* Background colors */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f7f9fb;
-    --bg-tertiary: #eceff2;
-    --bg-dark: #1c2b34;
-    --bg-darker: #141a1f;
-    --bg-card: #ffffff;
-    --bg-overlay: rgba(28, 43, 52, 0.8);
+    /* Legacy Datadog colors (Neonified) */
+    --dd-purple-primary: #c471ed;
+    --dd-purple-dark: #9b4dd6;
+    --dd-purple-light: #e599ff;
+    --dd-purple-lighter: #f0ccff;
+    --dd-purple-ultra-light: #f8f0ff;
     
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, var(--dd-purple-primary) 0%, var(--dd-purple-light) 100%);
-    --gradient-header: linear-gradient(135deg, #1c2b34 0%, #2c3e50 100%);
-    --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    --gradient-accent: linear-gradient(135deg, var(--dd-orange) 0%, #ff8c42 100%);
-    --gradient-success: linear-gradient(135deg, var(--dd-green) 0%, #28a745 100%);
+    /* Enhanced Datadog accent colors */
+    --dd-orange: #ff7f50;
+    --dd-blue: #00d4ff;
+    --dd-green: #39ff14;
+    --dd-red: #ff073a;
+    --dd-yellow: #ffff00;
     
-    /* Borders and radius */
-    --border-color: #e5e9ec;
-    --border-color-strong: #d1d8dd;
-    --border-radius-xs: 2px;
-    --border-radius-sm: 4px;
-    --border-radius: 6px;
-    --border-radius-lg: 8px;
-    --border-radius-xl: 12px;
-    --border-radius-2xl: 16px;
+    /* 🌟 CYBERPUNK TEXT COLORS */
+    --text-primary: #ffffff;
+    --text-secondary: #00d4ff;
+    --text-tertiary: rgba(255, 255, 255, 0.7);
+    --text-inverse: #0f0f23;
+    --text-accent: var(--jett-cyan);
+    --text-glow: 0 0 10px currentColor;
     
-    /* Shadows */
-    --shadow-xs: 0 1px 2px rgba(28, 43, 52, 0.06);
-    --shadow-sm: 0 2px 4px rgba(28, 43, 52, 0.08);
-    --shadow-md: 0 4px 8px rgba(28, 43, 52, 0.12);
-    --shadow-lg: 0 8px 16px rgba(28, 43, 52, 0.16);
-    --shadow-xl: 0 16px 32px rgba(28, 43, 52, 0.2);
-    --shadow-2xl: 0 24px 48px rgba(28, 43, 52, 0.24);
+    /* 🌌 CYBERPUNK BACKGROUND COLORS */
+    --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+    --bg-secondary: var(--cyber-dark);
+    --bg-tertiary: var(--cyber-navy);
+    --bg-dark: var(--cyber-darker);
+    --bg-darker: var(--cyber-void);
+    --bg-card: rgba(26, 26, 46, 0.9);
+    --bg-overlay: rgba(15, 15, 35, 0.95);
     
-    /* Transitions */
-    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* 🎨 CYBERPUNK GRADIENTS */
+    --gradient-primary: linear-gradient(135deg, var(--jett-cyan) 0%, var(--neon-purple) 100%);
+    --gradient-header: linear-gradient(135deg, var(--cyber-dark) 0%, var(--cyber-navy) 50%, var(--cyber-purple) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(15, 15, 35, 0.95), rgba(26, 26, 46, 0.9));
+    --gradient-accent: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%);
+    --gradient-success: linear-gradient(135deg, var(--neon-green) 0%, var(--jett-cyan) 100%);
+    --gradient-cyberpunk: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
     
-    /* Side navigation */
-    --side-nav-width: 260px;
-    --side-nav-collapsed-width: 72px;
-    --side-nav-bg: var(--bg-darker);
-    --side-nav-border: #2c3e50;
+    /* ⚡ CYBERPUNK BORDERS & RADIUS */
+    --border-color: rgba(0, 212, 255, 0.3);
+    --border-color-strong: rgba(0, 212, 255, 0.5);
+    --border-glow: rgba(0, 212, 255, 0.2);
+    --border-radius-xs: 5px;
+    --border-radius-sm: 8px;
+    --border-radius: 12px;
+    --border-radius-lg: 15px;
+    --border-radius-xl: 20px;
+    --border-radius-2xl: 25px;
+    
+    /* ✨ CYBERPUNK SHADOWS & GLOWS */
+    --shadow-xs: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 212, 255, 0.1);
+    --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 212, 255, 0.2);
+    --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 212, 255, 0.3);
+    --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.9), 0 0 80px rgba(255, 107, 157, 0.4);
+    --shadow-2xl: 0 35px 70px rgba(0, 0, 0, 0.95), 0 0 100px rgba(196, 113, 237, 0.5);
+    
+    /* 🌟 NEON GLOW EFFECTS */
+    --glow-cyan: 0 0 20px #00d4ff, 0 0 40px #00d4ff, 0 0 60px #00d4ff;
+    --glow-pink: 0 0 20px #ff6b9d, 0 0 40px #ff6b9d, 0 0 60px #ff6b9d;
+    --glow-purple: 0 0 20px #c471ed, 0 0 40px #c471ed, 0 0 60px #c471ed;
+    --glow-green: 0 0 20px #39ff14, 0 0 40px #39ff14, 0 0 60px #39ff14;
+    
+    /* 🔄 CYBERPUNK TRANSITIONS */
+    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* 🎮 JETT-INSPIRED SIDE NAVIGATION */
+    --side-nav-width: 320px;
+    --side-nav-collapsed-width: 80px;
+    --side-nav-bg: var(--gradient-header);
+    --side-nav-border: rgba(0, 212, 255, 0.3);
     --side-nav-text: #ffffff;
-    --side-nav-text-secondary: #a2abb4;
-    --side-nav-hover: rgba(255, 255, 255, 0.08);
-    --side-nav-active: var(--dd-purple-primary);
+    --side-nav-text-secondary: #00d4ff;
+    --side-nav-hover: rgba(0, 212, 255, 0.1);
+    --side-nav-active: var(--gradient-primary);
+    
+    /* 🎯 TYPOGRAPHY (Cyberpunk fonts) */
+    --font-family: 'Exo 2', 'Rajdhani', sans-serif;
+    --font-mono: 'Orbitron', 'SF Mono', Monaco, monospace;
+    --font-display: 'Orbitron', monospace;
     
     /* Spacing */
     --space-1: 0.25rem;
@@ -91,35 +133,94 @@
     box-sizing: border-box;
 }
 
+/* 🌟 CYBERPUNK KEYFRAME ANIMATIONS */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes neonPulse {
+    0%, 100% { 
+        text-shadow: 
+            0 0 5px currentColor,
+            0 0 10px currentColor,
+            0 0 15px currentColor;
+    }
+    50% { 
+        text-shadow: 
+            0 0 10px currentColor,
+            0 0 20px currentColor,
+            0 0 30px currentColor,
+            0 0 40px currentColor;
+    }
+}
+
+@keyframes borderGlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+@keyframes floatingElements {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(2deg); }
+}
+
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--font-family);
     line-height: 1.6;
     color: var(--text-primary);
-    background: var(--bg-secondary);
+    background: var(--bg-primary);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
 }
 
-/* Enhanced scrollbar */
+/* ✨ CYBERPUNK BACKGROUND EFFECTS */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 107, 157, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(196, 113, 237, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+    animation: floatingElements 20s ease-in-out infinite;
+}
+
+/* 🎨 CYBERPUNK SCROLLBAR */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-tertiary);
+    background: var(--cyber-dark);
     border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 212, 255, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border-color-strong);
+    background: linear-gradient(135deg, var(--jett-cyan), var(--neon-purple));
     border-radius: var(--border-radius);
-    transition: var(--transition-fast);
+    transition: var(--transition);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    box-shadow: var(--glow-cyan);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-tertiary);
+    background: linear-gradient(135deg, var(--neon-pink), var(--jett-cyan));
+    box-shadow: var(--glow-pink);
+    transform: scale(1.1);
 }
 
 /* App container */
@@ -129,12 +230,12 @@ body {
     background: var(--bg-secondary);
 }
 
-/* Enhanced Side Navigation */
+/* 🚀 JETT-INSPIRED SIDE NAVIGATION */
 .side-nav {
     width: var(--side-nav-width);
     background: var(--side-nav-bg);
-    background-image: linear-gradient(135deg, var(--side-nav-bg) 0%, #243240 100%);
-    border-right: 1px solid var(--side-nav-border);
+    backdrop-filter: blur(20px);
+    border-right: 2px solid var(--side-nav-border);
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -145,7 +246,19 @@ body {
     transition: var(--transition);
     overflow-y: auto;
     overflow-x: hidden;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
+}
+
+.side-nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--jett-cyan), var(--neon-purple), var(--neon-pink));
+    background-size: 100% 200%;
+    animation: borderGlow 3s linear infinite;
 }
 
 .side-nav.collapsed {
@@ -154,13 +267,27 @@ body {
 
 .side-nav-header {
     padding: var(--space-5);
-    border-bottom: 1px solid var(--side-nav-border);
+    border-bottom: 2px solid var(--side-nav-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 72px;
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(10px);
+    min-height: 80px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 157, 0.1));
+    backdrop-filter: blur(15px);
+    position: relative;
+    overflow: hidden;
+}
+
+.side-nav-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--jett-cyan), var(--neon-pink), var(--jett-cyan));
+    background-size: 200% 100%;
+    animation: borderGlow 2s linear infinite;
 }
 
 .side-nav-logo {
@@ -179,15 +306,18 @@ body {
 }
 
 .side-nav-logo-text {
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     white-space: nowrap;
     opacity: 1;
     transition: var(--transition);
-    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, var(--jett-cyan) 0%, var(--neon-pink) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    text-shadow: var(--glow-cyan);
+    animation: neonPulse 3s ease-in-out infinite;
 }
 
 .side-nav.collapsed .side-nav-logo-text {
@@ -196,27 +326,49 @@ body {
 }
 
 .side-nav-toggle {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--side-nav-text-secondary);
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(255, 107, 157, 0.2));
+    border: 2px solid var(--jett-cyan);
+    color: var(--jett-cyan);
     cursor: pointer;
     padding: var(--space-2);
-    border-radius: var(--border-radius);
-    transition: var(--transition-fast);
-    font-size: 1.1rem;
-    width: 32px;
-    height: 32px;
+    border-radius: var(--border-radius-lg);
+    transition: var(--transition);
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    position: relative;
+}
+
+.side-nav-toggle::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--jett-cyan), var(--neon-pink), var(--neon-purple));
+    border-radius: var(--border-radius-lg);
+    z-index: -1;
+    opacity: 0;
+    transition: var(--transition);
 }
 
 .side-nav-toggle:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: var(--side-nav-text);
-    transform: scale(1.05);
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(255, 107, 157, 0.3));
+    border-color: var(--neon-pink);
+    color: var(--neon-pink);
+    transform: scale(1.1);
+    box-shadow: var(--glow-pink);
+}
+
+.side-nav-toggle:hover::before {
+    opacity: 1;
+    animation: borderGlow 1s linear infinite;
 }
 
 .side-nav.collapsed .side-nav-toggle .toggle-icon {
@@ -336,6 +488,45 @@ body {
     width: 0;
 }
 
+/* 🎮 SPECIAL JETT TYPERACER STYLING */
+.side-nav-item.jett-special {
+    margin: var(--space-2) var(--space-3);
+    position: relative;
+    animation: neonPulse 2s ease-in-out infinite;
+}
+
+.side-nav-item.jett-special::before {
+    background: linear-gradient(135deg, var(--jett-cyan), var(--neon-pink), var(--neon-purple));
+    animation: borderGlow 2s linear infinite;
+}
+
+.side-nav-item.jett-special .side-nav-link {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(255, 107, 157, 0.2));
+    border: 1px solid var(--jett-cyan);
+    color: var(--jett-cyan);
+    font-weight: 600;
+    position: relative;
+}
+
+.jett-badge {
+    background: var(--neon-green);
+    color: var(--cyber-dark);
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 8px;
+    margin-left: auto;
+    animation: neonPulse 1s ease-in-out infinite;
+    font-family: var(--font-mono);
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px var(--neon-green);
+}
+
+.side-nav.collapsed .jett-badge {
+    opacity: 0;
+    width: 0;
+}
+
 .side-nav-divider {
     height: 1px;
     background: var(--side-nav-border);
@@ -366,16 +557,30 @@ body {
     margin-left: var(--side-nav-collapsed-width);
 }
 
-/* Enhanced Header */
+/* 🎯 CYBERPUNK HEADER */
 .header {
     background: var(--gradient-header);
-    border-bottom: 1px solid var(--border-color);
-    padding: var(--space-5) var(--space-6);
+    border-bottom: 3px solid var(--border-color);
+    padding: var(--space-6) var(--space-8);
     position: sticky;
     top: 0;
     z-index: 100;
-    backdrop-filter: blur(20px);
-    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(25px);
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--jett-cyan), var(--neon-pink), var(--neon-purple), var(--jett-cyan));
+    background-size: 300% 100%;
+    animation: borderGlow 4s linear infinite;
 }
 
 .header-content {
@@ -405,14 +610,34 @@ body {
     50% { filter: drop-shadow(0 6px 12px rgba(99, 44, 166, 0.4)); }
 }
 
+.logo-text-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
 .logo h1 {
-    font-weight: 700;
-    font-size: 1.5rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.8rem;
     margin: 0;
-    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, var(--jett-cyan) 0%, var(--neon-pink) 50%, var(--neon-purple) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: neonPulse 4s ease-in-out infinite;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.jett-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--jett-cyan);
+    opacity: 0.8;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px var(--jett-cyan);
+    animation: neonPulse 2s ease-in-out infinite reverse;
 }
 
 .status-indicator {
@@ -476,14 +701,15 @@ body {
     gap: var(--space-8);
 }
 
-/* Welcome section */
+/* 🌟 CYBERPUNK WELCOME SECTION */
 .welcome-section {
     text-align: center;
-    padding: var(--space-12) var(--space-6);
+    padding: var(--space-16) var(--space-8);
     background: var(--gradient-card);
+    backdrop-filter: blur(20px);
     border-radius: var(--border-radius-2xl);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-2xl);
+    border: 2px solid var(--border-color);
     position: relative;
     overflow: hidden;
 }
@@ -495,7 +721,105 @@ body {
     left: 0;
     right: 0;
     height: 4px;
-    background: var(--gradient-primary);
+    background: linear-gradient(90deg, var(--jett-cyan), var(--neon-pink), var(--neon-purple), var(--jett-cyan));
+    background-size: 300% 100%;
+    animation: borderGlow 3s linear infinite;
+}
+
+.welcome-header {
+    margin-bottom: var(--space-8);
+}
+
+.welcome-section h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--jett-cyan) 0%, var(--neon-pink) 50%, var(--neon-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-3);
+    animation: neonPulse 3s ease-in-out infinite;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.welcome-subtitle {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    opacity: 0.9;
+    text-shadow: 0 0 10px var(--jett-cyan);
+}
+
+.welcome-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-6);
+    margin: var(--space-10) 0;
+}
+
+.welcome-feature {
+    background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 157, 0.1));
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-xl);
+    padding: var(--space-6);
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-feature::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--jett-cyan), transparent);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.welcome-feature:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--jett-cyan);
+}
+
+.welcome-feature:hover::before {
+    opacity: 1;
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: var(--space-3);
+    animation: floatingElements 3s ease-in-out infinite;
+}
+
+.welcome-feature h3 {
+    font-family: var(--font-family);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.welcome-feature p {
+    color: var(--text-tertiary);
+    line-height: 1.6;
+}
+
+.cyber-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--jett-cyan), var(--neon-pink), var(--neon-purple), transparent);
+    margin-top: var(--space-8);
+    animation: borderGlow 4s linear infinite;
 }
 
 .welcome-section h2 {
@@ -877,18 +1201,46 @@ body {
 }
 
 .btn-primary {
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, var(--jett-cyan), var(--neon-purple));
     color: var(--text-inverse);
-    box-shadow: var(--shadow-md);
+    border: 2px solid var(--jett-cyan);
+    font-family: var(--font-family);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--glow-cyan);
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    transition: var(--transition);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--neon-pink), var(--jett-cyan));
+    border-color: var(--neon-pink);
+    transform: translateY(-3px);
+    box-shadow: var(--glow-pink);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.btn-primary:hover::after {
+    width: 100px;
+    height: 100px;
 }
 
 .btn-primary:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
