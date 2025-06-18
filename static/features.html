@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en-US" data-base-url="http://0.0.0.0:8000/" data-type="features" data-page-code-lang="" style="opacity:1">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Features | Datadog Notebook Generator</title>
+    <link rel="canonical" href="http://0.0.0.0:8000/static/features.html">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/png" href="/static/images/datadog-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description" content="Comprehensive guide to all features in the Datadog Notebook Generator - AI-powered generation, metric analysis, dashboard creation, and more">
+    <meta name="theme-color" content="#632ca6">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Features | Datadog Notebook Generator">
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="Explore all features of the AI-powered Datadog Notebook Generator">
+    <meta property="og:site_name" content="Datadog Notebook Generator">
+    
+    <style>
+        /* Authentic Datadog Documentation Styling */
+        :root {
+            --dd-purple: #632ca6;
+            --dd-purple-light: #774aa4;
+            --dd-purple-dark: #4f2385;
+            --dd-blue: #3d95ff;
+            --dd-green: #5cb85c;
+            --dd-orange: #f0ad4e;
+            --dd-red: #d9534f;
+            --dd-gray-50: #f8f9fa;
+            --dd-gray-100: #f1f3f4;
+            --dd-gray-200: #e9ecef;
+            --dd-gray-300: #dee2e6;
+            --dd-gray-400: #ced4da;
+            --dd-gray-500: #adb5bd;
+            --dd-gray-600: #6c757d;
+            --dd-gray-700: #495057;
+            --dd-gray-800: #343a40;
+            --dd-gray-900: #212529;
+            --dd-border-color: #dee2e6;
+            --dd-text-color: #212529;
+            --dd-muted: #6c757d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            color: var(--dd-text-color);
+            margin: 0;
+            background: #ffffff;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        /* Header and Navigation */
+        .main-nav-wrapper {
+            background: #fff;
+            border-bottom: 1px solid var(--dd-border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .main-nav {
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dd-text-color);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .nav-brand img {
+            height: 32px;
+            margin-right: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: var(--dd-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--dd-purple);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .row {
+            display: flex;
+            margin: 0 -12px;
+        }
+
+        .col-3 {
+            flex: 0 0 25%;
+            padding: 0 12px;
+        }
+
+        .col-9 {
+            flex: 0 0 75%;
+            padding: 0 12px;
+        }
+
+        /* Sidebar Navigation */
+        .docs-sidebar {
+            background: var(--dd-gray-50);
+            border-radius: 8px;
+            padding: 24px;
+            position: sticky;
+            top: 89px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-nav a {
+            color: var(--dd-gray-700);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 12px;
+            display: block;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--dd-gray-100);
+            color: var(--dd-purple);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--dd-purple);
+            color: white;
+        }
+
+        /* Main Content Area */
+        .docs-content {
+            padding: 32px 0;
+            min-height: calc(100vh - 65px);
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 48px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--dd-border-color);
+        }
+
+        .page-header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0 0 16px 0;
+            color: var(--dd-gray-900);
+            line-height: 1.1;
+        }
+
+        .page-header .subtitle {
+            font-size: 20px;
+            color: var(--dd-muted);
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--dd-muted);
+        }
+
+        .breadcrumb a {
+            color: var(--dd-purple);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: var(--dd-gray-400);
+        }
+
+        /* Content Sections */
+        .content-section {
+            margin-bottom: 64px;
+        }
+
+        .content-section h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0 0 24px 0;
+            color: var(--dd-gray-900);
+            line-height: 1.2;
+        }
+
+        .content-section h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 32px 0 16px 0;
+            color: var(--dd-gray-900);
+        }
+
+        .content-section h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 24px 0 12px 0;
+            color: var(--dd-gray-800);
+        }
+
+        .content-section p {
+            margin-bottom: 16px;
+            color: var(--dd-gray-700);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid var(--dd-border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 12px rgba(99, 44, 166, 0.15);
+            transform: translateY(-2px);
+            border-color: var(--dd-purple);
+        }
+
+        .feature-card .icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .feature-card h4 {
+            margin: 0 0 8px 0;
+            color: var(--dd-gray-900);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: var(--dd-gray-600);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Alert Boxes */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid;
+            background: var(--dd-gray-50);
+        }
+
+        .alert-info {
+            border-color: var(--dd-blue);
+            background: #ebf5fa;
+            color: #26759c;
+        }
+
+        .alert-success {
+            border-color: var(--dd-green);
+            background: #d9f3e0;
+            color: #297a3f;
+        }
+
+        .alert-warning {
+            border-color: var(--dd-orange);
+            background: #fff0d4;
+            color: #906623;
+        }
+
+        .alert-tip {
+            border-color: var(--dd-purple);
+            background: #f3e5f5;
+            color: var(--dd-purple-dark);
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--dd-gray-900);
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 24px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .code-inline {
+            background: var(--dd-gray-100);
+            color: var(--dd-purple-dark);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+
+        /* API Documentation */
+        .endpoint-card {
+            background: var(--dd-gray-50);
+            border: 1px solid var(--dd-border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-right: 12px;
+        }
+
+        .method-get { background: #d9f3e0; color: #297a3f; }
+        .method-post { background: #ebf5fa; color: #26759c; }
+        .method-put { background: #fff0d4; color: #906623; }
+        .method-delete { background: #fbd6db; color: #b72a3a; }
+
+        .endpoint-url {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            color: var(--dd-gray-700);
+        }
+
+        /* Tables */
+        .docs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border: 1px solid var(--dd-border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .docs-table th {
+            background: var(--dd-gray-50);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dd-gray-800);
+            border-bottom: 1px solid var(--dd-border-color);
+            font-size: 14px;
+        }
+
+        .docs-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--dd-gray-200);
+            color: var(--dd-gray-700);
+            font-size: 14px;
+        }
+
+        .docs-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .docs-table tbody tr:hover {
+            background: var(--dd-gray-50);
+        }
+
+        .required-badge {
+            background: var(--dd-red);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .optional-badge {
+            background: var(--dd-gray-400);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: var(--dd-gray-700);
+        }
+
+        li strong {
+            color: var(--dd-gray-900);
+        }
+
+        /* Navigation Links */
+        .page-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 48px 0;
+            padding: 24px 0;
+            border-top: 1px solid var(--dd-border-color);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            color: var(--dd-purple);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 12px 20px;
+            border: 1px solid var(--dd-border-color);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--dd-purple);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(99, 44, 166, 0.2);
+        }
+
+        .nav-link-prev::before {
+            content: '←';
+            margin-right: 8px;
+        }
+
+        .nav-link-next::after {
+            content: '→';
+            margin-left: 8px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .row {
+                flex-direction: column;
+            }
+
+            .col-3, .col-9 {
+                flex: none;
+                width: 100%;
+            }
+
+            .docs-sidebar {
+                position: static;
+                margin-bottom: 32px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .page-navigation {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .page-header h1 {
+                font-size: 36px;
+            }
+
+            .content-section h2 {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .main-nav {
+                padding: 0 16px;
+            }
+
+            .page-header h1 {
+                font-size: 28px;
+            }
+
+            .content-section h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <div class="main-nav-wrapper">
+        <nav class="main-nav">
+            <a href="http://0.0.0.0:8000/" class="nav-brand">
+                <img src="/static/images/datadog-logo.png" alt="Datadog" onerror="this.style.display='none'">
+                Notebook Generator
+            </a>
+            <ul class="nav-links">
+                <li><a href="http://0.0.0.0:8000/">Home</a></li>
+                <li><a href="http://0.0.0.0:8000/docs">Documentation</a></li>
+                <li><a href="http://0.0.0.0:8000/static/features.html">Features</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-3">
+                <div class="docs-sidebar">
+                    <ul class="sidebar-nav">
+                        <li><a href="#overview" class="active">Overview</a></li>
+                        <li><a href="#ai-generation">AI Generation</a></li>
+                        <li><a href="#datadog-integration">Datadog Integration</a></li>
+                        <li><a href="#metric-analysis">Metric Analysis</a></li>
+                        <li><a href="#web-interface">Web Interface</a></li>
+                        <li><a href="#api-endpoints">API Endpoints</a></li>
+                        <li><a href="#templates">Templates</a></li>
+                        <li><a href="#monitoring">Monitoring & Health</a></li>
+                        <li><a href="#gaming">Gaming Features</a></li>
+                        <li><a href="#advanced">Advanced Features</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-9">
+                <div class="docs-content">
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <nav class="breadcrumb">
+                            <a href="http://0.0.0.0:8000/">Home</a>
+                            <span class="breadcrumb-separator">/</span>
+                            <a href="http://0.0.0.0:8000/docs">Documentation</a>
+                            <span class="breadcrumb-separator">/</span>
+                            <span>Features</span>
+                        </nav>
+                        <h1>Features</h1>
+                        <p class="subtitle">Comprehensive guide to all capabilities in the Datadog Notebook Generator</p>
+                    </div>
+
+                    <!-- Overview Section -->
+                    <section class="content-section" id="overview">
+                        <h2>Overview</h2>
+                        <p>The Datadog Notebook Generator is a comprehensive AI-powered platform that automates the creation, analysis, and deployment of monitoring assets. Built with modern web technologies and integrated with OpenAI's advanced language models, it provides enterprise-grade capabilities for DevOps teams, SREs, and monitoring specialists.</p>
+
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="icon">🤖</div>
+                                <h4>AI-Powered Generation</h4>
+                                <p>Advanced OpenAI GPT integration that understands monitoring contexts and generates intelligent notebook structures with proper metric selection and visualization recommendations.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">🔗</div>
+                                <h4>Direct Datadog Integration</h4>
+                                <p>Seamless API integration with Datadog for automatic deployment, validation, and management of notebooks and dashboards directly in your organization.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">📊</div>
+                                <h4>Dual Asset Support</h4>
+                                <p>Generate both interactive notebooks for analysis and visual dashboards for monitoring, each optimized for their specific use cases and audiences.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">🔍</div>
+                                <h4>Metric Analysis</h4>
+                                <p>Intelligent analysis of suggested metrics against existing customer data, providing coverage reports and integration recommendations.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">🎨</div>
+                                <h4>Modern Web Interface</h4>
+                                <p>Beautiful, responsive frontend with real-time previews, tabbed interfaces, and intuitive user experience designed for professional use.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">⚡</div>
+                                <h4>Gaming Features</h4>
+                                <p>Integrated TypeRacer game for entertainment during load times, featuring Jett-themed cyberpunk styling and competitive elements.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- AI Generation Section -->
+                    <section class="content-section" id="ai-generation">
+                        <h2>AI-Powered Generation</h2>
+                        <p>At the heart of the platform is sophisticated AI integration that transforms natural language descriptions into production-ready monitoring assets.</p>
+
+                        <h3>Language Model Integration</h3>
+                        <ul>
+                            <li><strong>OpenAI GPT-4 Integration:</strong> Advanced language understanding for monitoring contexts</li>
+                            <li><strong>Context-Aware Prompting:</strong> Specialized prompts optimized for monitoring use cases</li>
+                            <li><strong>Metric Intelligence:</strong> Automatic selection of relevant metrics based on request analysis</li>
+                            <li><strong>Structure Validation:</strong> AI-generated content automatically validates against Datadog schemas</li>
+                        </ul>
+
+                        <div class="alert alert-tip">
+                            <strong>💡 Pro Tip:</strong> The AI understands monitoring best practices and will automatically suggest appropriate visualization types, time ranges, and aggregation methods based on your description.
+                        </div>
+
+                        <h3>Supported Generation Types</h3>
+
+                        <h4>Notebook Generation</h4>
+                        <p>Interactive notebooks with mixed content including markdown documentation, metric queries, and visualizations:</p>
+                        <ul>
+                            <li>Markdown cells for documentation and explanations</li>
+                            <li>Timeseries visualizations with customizable queries</li>
+                            <li>Query value cells for single-metric displays</li>
+                            <li>Mixed content workflows for comprehensive analysis</li>
+                        </ul>
+
+                        <h4>Dashboard Generation</h4>
+                        <p>Visual dashboards optimized for monitoring and alerting:</p>
+                        <ul>
+                            <li>Multiple widget types (timeseries, query values, heat maps)</li>
+                            <li>Responsive layout optimization</li>
+                            <li>Template variables for dynamic filtering</li>
+                            <li>Alert integration and notification setup</li>
+                        </ul>
+                    </section>
+
+                    <!-- Datadog Integration Section -->
+                    <section class="content-section" id="datadog-integration">
+                        <h2>Datadog Integration</h2>
+                        <p>Comprehensive integration with Datadog's APIs enables seamless asset management and deployment.</p>
+
+                        <h3>Authentication & Configuration</h3>
+                        <div class="code-block">
+# Configuration Options
+DATADOG_API_KEY = "your-datadog-api-key"
+DATADOG_APP_KEY = "your-datadog-app-key"  
+DATADOG_BASE_URL = "https://api.datadoghq.com"
+                        </div>
+
+                        <h3>Deployment Capabilities</h3>
+                        <ul>
+                            <li><strong>Automatic Creation:</strong> Deploy generated assets directly to your Datadog organization</li>
+                            <li><strong>Structure Validation:</strong> Pre-deployment validation ensures compatibility</li>
+                            <li><strong>Error Handling:</strong> Comprehensive error reporting for failed deployments</li>
+                            <li><strong>Asset Management:</strong> List, retrieve, and manage existing notebooks and dashboards</li>
+                        </ul>
+
+                        <div class="alert alert-info">
+                            <strong>ℹ️ Integration Requirements:</strong> You need both API and Application keys from your Datadog organization with appropriate permissions for notebook and dashboard creation.
+                        </div>
+                    </section>
+
+                    <!-- Metric Analysis Section -->
+                    <section class="content-section" id="metric-analysis">
+                        <h2>Metric Analysis</h2>
+                        <p>Advanced metric analysis capabilities help teams understand their monitoring coverage and identify gaps.</p>
+
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="icon">📊</div>
+                                <h4>Coverage Analysis</h4>
+                                <p>Compare suggested metrics against existing customer metrics to identify coverage gaps and optimization opportunities.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">🎯</div>
+                                <h4>Integration Recommendations</h4>
+                                <p>Automatic recommendations for missing integrations based on metric analysis and monitoring best practices.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">📋</div>
+                                <h4>Setup Guides</h4>
+                                <p>Contextual setup guides for recommended integrations with step-by-step implementation instructions.</p>
+                            </div>
+                        </div>
+
+                        <h3>Analysis Features</h3>
+                        <ul>
+                            <li><strong>Metric Comparison:</strong> Analyze suggested vs. existing metrics</li>
+                            <li><strong>Coverage Reporting:</strong> Percentage coverage with detailed breakdowns</li>
+                            <li><strong>Missing Metric Identification:</strong> Precise identification of monitoring gaps</li>
+                            <li><strong>Integration Mapping:</strong> Map metrics to required integrations</li>
+                            <li><strong>Setup Documentation:</strong> Automatic generation of setup guides</li>
+                        </ul>
+                    </section>
+
+                    <!-- Web Interface Section -->
+                    <section class="content-section" id="web-interface">
+                        <h2>Web Interface</h2>
+                        <p>Modern, responsive web interface designed for professional monitoring teams with attention to user experience and efficiency.</p>
+
+                        <h3>User Experience Features</h3>
+                        <ul>
+                            <li><strong>Responsive Design:</strong> Optimized for desktop, tablet, and mobile devices</li>
+                            <li><strong>Real-time Previews:</strong> Live preview of generated content as you type</li>
+                            <li><strong>Tabbed Interface:</strong> Organized content with preview, JSON, and details tabs</li>
+                            <li><strong>Keyboard Shortcuts:</strong> Efficient workflows with Ctrl/Cmd + Enter for generation</li>
+                            <li><strong>Status Indicators:</strong> Real-time system health and connection status</li>
+                        </ul>
+
+                        <div class="alert alert-success">
+                            <strong>✨ Enhanced UX:</strong> The interface includes loading animations, progress indicators, and even an integrated TypeRacer game to keep users engaged during processing.
+                        </div>
+                    </section>
+
+                    <!-- API Endpoints Section -->
+                    <section class="content-section" id="api-endpoints">
+                        <h2>API Endpoints</h2>
+                        <p>Comprehensive REST API for programmatic access to all platform capabilities.</p>
+
+                        <h3>Notebook Management</h3>
+                        
+                        <div class="endpoint-card">
+                            <div class="endpoint-header">
+                                <span class="method-badge method-post">POST</span>
+                                <span class="endpoint-url">/generate</span>
+                            </div>
+                            <p>Generate a new notebook based on natural language description</p>
+                            
+                            <h4>Request Parameters</h4>
+                            <table class="docs-table">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Required</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code class="code-inline">description</code></td>
+                                        <td>string</td>
+                                        <td><span class="required-badge">Required</span></td>
+                                        <td>Natural language description of monitoring needs</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code class="code-inline">metric_names</code></td>
+                                        <td>string</td>
+                                        <td><span class="optional-badge">Optional</span></td>
+                                        <td>Comma-separated list of specific metrics</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code class="code-inline">timeframes</code></td>
+                                        <td>string</td>
+                                        <td><span class="optional-badge">Optional</span></td>
+                                        <td>Time range for analysis (e.g., "1h", "1d", "1w")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code class="code-inline">create_in_datadog</code></td>
+                                        <td>boolean</td>
+                                        <td><span class="optional-badge">Optional</span></td>
+                                        <td>Whether to deploy directly to Datadog</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="endpoint-card">
+                            <div class="endpoint-header">
+                                <span class="method-badge method-get">GET</span>
+                                <span class="endpoint-url">/notebooks</span>
+                            </div>
+                            <p>List existing notebooks with optional count parameter</p>
+                        </div>
+
+                        <div class="endpoint-card">
+                            <div class="endpoint-header">
+                                <span class="method-badge method-get">GET</span>
+                                <span class="endpoint-url">/notebooks/{notebook_id}</span>
+                            </div>
+                            <p>Retrieve a specific notebook by ID</p>
+                        </div>
+
+                        <h3>Dashboard Management</h3>
+                        
+                        <div class="endpoint-card">
+                            <div class="endpoint-header">
+                                <span class="method-badge method-post">POST</span>
+                                <span class="endpoint-url">/generate-dashboard</span>
+                            </div>
+                            <p>Generate a new dashboard with visual widgets and monitoring capabilities</p>
+                        </div>
+
+                        <h3>Utility Endpoints</h3>
+                        
+                        <div class="endpoint-card">
+                            <div class="endpoint-header">
+                                <span class="method-badge method-get">GET</span>
+                                <span class="endpoint-url">/health</span>
+                            </div>
+                            <p>System health check with service status</p>
+                        </div>
+                    </section>
+
+                    <!-- Templates Section -->
+                    <section class="content-section" id="templates">
+                        <h2>Templates & Examples</h2>
+                        <p>Pre-built templates and examples to accelerate monitoring setup and demonstrate best practices.</p>
+
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="icon">🛠️</div>
+                                <h4>Support Cases</h4>
+                                <p>Templates for common troubleshooting scenarios including memory investigations, performance analysis, and error tracking.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">📈</div>
+                                <h4>Metric Demonstrations</h4>
+                                <p>Examples showcasing rollup functions, aggregation methods, and visualization best practices for training and demos.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">🚨</div>
+                                <h4>Escalation Analysis</h4>
+                                <p>Comprehensive incident analysis templates for service disruptions, performance degradation, and capacity issues.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="icon">⚡</div>
+                                <h4>Rapid Prototyping</h4>
+                                <p>Quick-start templates for new service monitoring, POCs, and experimental monitoring configurations.</p>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <strong>💡 Template Usage:</strong> Templates serve as starting points that can be customized. The AI will adapt the template content based on your specific modifications and requirements.
+                        </div>
+                    </section>
+
+                    <!-- Monitoring Section -->
+                    <section class="content-section" id="monitoring">
+                        <h2>Monitoring & Health</h2>
+                        <p>Built-in monitoring and health checking capabilities ensure system reliability and performance.</p>
+
+                        <h3>Health Monitoring</h3>
+                        <ul>
+                            <li><strong>Service Health:</strong> Real-time monitoring of all system components</li>
+                            <li><strong>API Connectivity:</strong> Continuous testing of OpenAI and Datadog API connections</li>
+                            <li><strong>Configuration Validation:</strong> Automatic validation of API keys and credentials</li>
+                            <li><strong>Performance Metrics:</strong> Response time tracking and performance monitoring</li>
+                        </ul>
+
+                        <h3>System Status</h3>
+                        <p>The health endpoint provides comprehensive system status:</p>
+                        <div class="code-block">
+{
+  "status": "healthy",
+  "openai_configured": true,
+  "datadog_configured": true,
+  "datadog_connection": "connected",
+  "response_time": "245ms",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+                        </div>
+                    </section>
+
+                    <!-- Gaming Features Section -->
+                    <section class="content-section" id="gaming">
+                        <h2>Gaming Features</h2>
+                        <p>Unique gaming integration to enhance user engagement during processing times.</p>
+
+                        <h3>Jett's TypeRacer</h3>
+                        <p>An integrated cyberpunk-themed typing game featuring:</p>
+                        <ul>
+                            <li><strong>Mazda MX-5 Racing:</strong> Drive Jett's iconic sports car through typing challenges</li>
+                            <li><strong>Cyberpunk Styling:</strong> Neon aesthetics with lightning effects and gradient borders</li>
+                            <li><strong>Real-time Metrics:</strong> WPM tracking, progress indicators, and performance statistics</li>
+                            <li><strong>Challenge Variety:</strong> Multiple sentence sets with varying difficulty levels</li>
+                            <li><strong>Victory Celebrations:</strong> Confetti effects and achievement notifications</li>
+                        </ul>
+
+                        <div class="alert alert-tip">
+                            <strong>🎯 Gaming Integration:</strong> The TypeRacer automatically appears during AI generation loading times, turning wait periods into engaging challenges.
+                        </div>
+                    </section>
+
+                    <!-- Advanced Features Section -->
+                    <section class="content-section" id="advanced">
+                        <h2>Advanced Capabilities</h2>
+                        <p>Enterprise-grade features for advanced users and complex monitoring scenarios.</p>
+
+                        <h3>Configuration Management</h3>
+                        <ul>
+                            <li><strong>Environment Variables:</strong> Support for environment-based configuration</li>
+                            <li><strong>Config Files:</strong> Structured configuration with validation</li>
+                            <li><strong>Multi-Environment:</strong> Support for development, staging, and production environments</li>
+                            <li><strong>Hot Reloading:</strong> Dynamic configuration updates without restarts</li>
+                        </ul>
+
+                        <h3>Security Features</h3>
+                        <ul>
+                            <li><strong>API Key Management:</strong> Secure storage and rotation of credentials</li>
+                            <li><strong>CORS Configuration:</strong> Cross-origin request handling</li>
+                            <li><strong>Input Validation:</strong> Comprehensive input sanitization and validation</li>
+                            <li><strong>Error Handling:</strong> Secure error reporting without credential exposure</li>
+                        </ul>
+
+                        <div class="alert alert-success">
+                            <strong>🚀 Enterprise Ready:</strong> The platform is designed for enterprise deployment with scalability, security, and reliability as core principles.
+                        </div>
+                    </section>
+
+                    <!-- Navigation Links -->
+                    <div class="page-navigation">
+                        <a href="http://0.0.0.0:8000/docs" class="nav-link nav-link-prev">Documentation Home</a>
+                        <a href="http://0.0.0.0:8000/docs/api" class="nav-link nav-link-next">API Reference</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Active sidebar navigation
+        function updateActiveNav() {
+            const sections = document.querySelectorAll('.content-section');
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveNav);
+        window.addEventListener('load', updateActiveNav);
+    </script>
+</body>
+</html> 
