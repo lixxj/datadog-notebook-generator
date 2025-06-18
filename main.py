@@ -149,6 +149,11 @@ async def typeracer():
     """Serve the typeracer game page"""
     return FileResponse('typeracer/index.html')
 
+@app.get("/docs")
+async def documentation():
+    """Serve the documentation page"""
+    return FileResponse('static/docs.html')
+
 @app.post("/generate", response_model=NotebookResponse)
 async def generate_notebook(request: NotebookRequest):
     """Generate a notebook based on user description"""
