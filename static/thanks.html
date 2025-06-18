@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en-US" data-base-url="http://0.0.0.0:8000/" data-type="thanks" style="opacity:1">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Thank You | Datadog Notebook Generator</title>
+    <link rel="canonical" href="http://0.0.0.0:8000/static/thanks.html">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/png" href="/static/images/datadog-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="description" content="Heartfelt gratitude to everyone who made our hackathon project possible">
+    <meta name="theme-color" content="#632ca6">
+    
+    <style>
+        :root {
+            --dd-purple: #632ca6;
+            --dd-purple-light: #774aa4;
+            --dd-purple-dark: #4f2385;
+            --dd-blue: #3d95ff;
+            --dd-green: #5cb85c;
+            --dd-orange: #f0ad4e;
+            --dd-red: #d9534f;
+            --dd-pink: #e91e63;
+            --dd-yellow: #ffc107;
+            --dd-cyan: #17a2b8;
+            --dd-gray-50: #f8f9fa;
+            --dd-gray-100: #f1f3f4;
+            --dd-gray-200: #e9ecef;
+            --dd-gray-300: #dee2e6;
+            --dd-gray-400: #ced4da;
+            --dd-gray-500: #adb5bd;
+            --dd-gray-600: #6c757d;
+            --dd-gray-700: #495057;
+            --dd-gray-800: #343a40;
+            --dd-gray-900: #212529;
+            --dd-border-color: #dee2e6;
+            --dd-text-color: #212529;
+            --dd-muted: #6c757d;
+            --money-green: #228b22;
+            --money-gold: #ffd700;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--dd-text-color);
+            margin: 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f0f8ff 100%);
+            font-size: 16px;
+            font-weight: 400;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(99, 44, 166, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(61, 149, 255, 0.1) 0%, transparent 50%);
+            animation: backgroundFloat 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes backgroundFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        /* Header */
+        .main-nav-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--dd-border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            box-shadow: 0 1px 20px rgba(0,0,0,0.1);
+        }
+
+        .main-nav {
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dd-text-color);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .nav-brand img {
+            height: 32px;
+            margin-right: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: var(--dd-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--dd-purple);
+            transform: translateY(-1px);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--dd-purple), var(--dd-blue));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 80px;
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue), var(--dd-green));
+            border-radius: 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: heroPattern 30s linear infinite;
+        }
+
+        @keyframes heroPattern {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(40px, 40px) rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            font-weight: 900;
+            margin: 0 0 24px 0;
+            background: linear-gradient(45deg, #ffffff, #f0f8ff, #ffffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientText 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        @keyframes textGlow {
+            0% { 
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.3);
+                transform: scale(1);
+            }
+            100% { 
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.6), 0 0 30px rgba(255,215,0,0.4);
+                transform: scale(1.02);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 28px;
+            margin: 0 0 32px 0;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .gratitude-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: badgeFloat 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes badgeFloat {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        /* Thank You Cards */
+        .thanks-section {
+            margin-bottom: 80px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0 0 16px 0;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 20px;
+            color: var(--dd-muted);
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .thanks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            margin: 48px 0;
+        }
+
+        .thank-you-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 
+                0 10px 40px rgba(0,0,0,0.1),
+                0 0 0 1px rgba(255,255,255,0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .thank-you-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue), var(--dd-green));
+        }
+
+        .thank-you-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 
+                0 25px 60px rgba(99, 44, 166, 0.2),
+                0 0 0 1px rgba(99, 44, 166, 0.1);
+        }
+
+        .thank-you-card.jett {
+            border: 2px solid var(--dd-blue);
+        }
+
+        .thank-you-card.jett::before {
+            background: linear-gradient(135deg, var(--dd-blue), var(--dd-cyan));
+        }
+
+        .thank-you-card.jm {
+            border: 2px solid var(--money-green);
+            position: relative;
+        }
+
+        .thank-you-card.jm::before {
+            background: linear-gradient(135deg, var(--money-green), var(--money-gold));
+        }
+
+        .thank-you-card.yvonne {
+            border: 2px solid var(--dd-pink);
+        }
+
+        .thank-you-card.yvonne::before {
+            background: linear-gradient(135deg, var(--dd-pink), var(--dd-red));
+        }
+
+        .card-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 24px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue));
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 8px 32px rgba(99, 44, 166, 0.3);
+            animation: avatarPulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes avatarPulse {
+            0% { box-shadow: 0 8px 32px rgba(99, 44, 166, 0.3); }
+            100% { box-shadow: 0 12px 40px rgba(99, 44, 166, 0.5); }
+        }
+
+        .card-avatar.jett {
+            background: linear-gradient(135deg, var(--dd-blue), var(--dd-cyan));
+        }
+
+        .card-avatar.jm {
+            background: linear-gradient(135deg, var(--money-green), var(--money-gold));
+        }
+
+        .card-avatar.yvonne {
+            background: linear-gradient(135deg, var(--dd-pink), var(--dd-red));
+        }
+
+        .card-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: var(--dd-gray-900);
+            text-align: center;
+        }
+
+        .card-role {
+            font-size: 16px;
+            color: var(--dd-muted);
+            text-align: center;
+            margin: 0 0 24px 0;
+            font-weight: 500;
+        }
+
+        .card-message {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--dd-gray-700);
+            text-align: center;
+            font-style: italic;
+            position: relative;
+        }
+
+        .card-message::before {
+            content: '"';
+            font-size: 60px;
+            color: var(--dd-purple);
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+        .card-message::after {
+            content: '"';
+            font-size: 60px;
+            color: var(--dd-purple);
+            position: absolute;
+            bottom: -40px;
+            right: -10px;
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+        /* JM's Special Money Section */
+        .money-bonus {
+            background: linear-gradient(135deg, var(--money-green), var(--money-gold));
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(34, 139, 34, 0.3);
+        }
+
+        .money-bonus::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.1) 10px,
+                rgba(255, 255, 255, 0.1) 20px
+            );
+            animation: moneyPattern 4s linear infinite;
+        }
+
+        @keyframes moneyPattern {
+            0% { transform: translateX(-20px) translateY(-20px); }
+            100% { transform: translateX(20px) translateY(20px); }
+        }
+
+        .money-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .money-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            margin: 0 0 16px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .fake-money-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .fake-bill {
+            width: 120px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--money-green), #32cd32);
+            border: 2px solid var(--money-gold);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            animation: billFloat 3s ease-in-out infinite alternate;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(34, 139, 34, 0.4);
+        }
+
+        .fake-bill:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 32px rgba(34, 139, 34, 0.6);
+        }
+
+        .fake-bill:nth-child(1) { animation-delay: 0s; }
+        .fake-bill:nth-child(2) { animation-delay: 0.5s; }
+        .fake-bill:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes billFloat {
+            0% { transform: translateY(0px) rotate(-2deg); }
+            100% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .bill-amount {
+            font-size: 18px;
+            font-weight: 900;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .bill-text {
+            font-size: 8px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bill-jm {
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-size: 6px;
+            color: rgba(255,255,255,0.8);
+            font-weight: 700;
+        }
+
+        .money-disclaimer {
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            margin-top: 16px;
+            font-style: italic;
+        }
+
+                 /* Money Rain Effect */
+         .money-rain {
+             position: fixed;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             pointer-events: none;
+             z-index: 1000;
+             display: none;
+         }
+
+         .money-symbol {
+             position: absolute;
+             font-size: 40px;
+             animation: moneyFall 4s ease-in-out infinite;
+             opacity: 0;
+             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+         }
+
+         .money-symbol.small {
+             font-size: 28px;
+         }
+
+         .money-symbol.large {
+             font-size: 56px;
+         }
+
+         @keyframes moneyFall {
+             0% {
+                 opacity: 0;
+                 transform: translateY(-150px) rotate(0deg) scale(0.5);
+             }
+             5% {
+                 opacity: 1;
+                 transform: translateY(-100px) rotate(45deg) scale(1);
+             }
+             95% {
+                 opacity: 1;
+             }
+             100% {
+                 opacity: 0;
+                 transform: translateY(calc(100vh + 100px)) rotate(720deg) scale(0.3);
+             }
+         }
+
+         @keyframes moneyBounce {
+             0% {
+                 opacity: 0;
+                 transform: translateY(-150px) rotate(0deg) scale(0.8);
+             }
+             15% {
+                 opacity: 1;
+                 transform: translateY(-50px) rotate(180deg) scale(1.2);
+             }
+             30% {
+                 transform: translateY(0px) rotate(360deg) scale(1);
+             }
+             45% {
+                 transform: translateY(-30px) rotate(540deg) scale(1.1);
+             }
+             60% {
+                 transform: translateY(20px) rotate(720deg) scale(0.9);
+             }
+             85% {
+                 opacity: 1;
+             }
+             100% {
+                 opacity: 0;
+                 transform: translateY(calc(100vh + 50px)) rotate(900deg) scale(0.2);
+             }
+         }
+
+         .money-symbol.bounce {
+             animation: moneyBounce 5s ease-out infinite;
+         }
+
+        /* General Thanks Section */
+        .general-thanks {
+            background: linear-gradient(135deg, rgba(99, 44, 166, 0.05), rgba(61, 149, 255, 0.05));
+            border-radius: 24px;
+            padding: 60px;
+            text-align: center;
+            margin: 80px 0;
+            border: 1px solid rgba(99, 44, 166, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .general-thanks::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--dd-purple), var(--dd-blue), var(--dd-green), var(--dd-orange));
+            background-size: 400% 400%;
+            border-radius: 24px;
+            z-index: -1;
+            animation: borderGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .general-thanks-title {
+            font-size: 40px;
+            font-weight: 800;
+            margin: 0 0 24px 0;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .general-thanks-message {
+            font-size: 20px;
+            line-height: 1.7;
+            color: var(--dd-gray-700);
+            max-width: 800px;
+            margin: 0 auto 32px auto;
+        }
+
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin: 48px 0;
+        }
+
+        .community-item {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .community-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(99, 44, 166, 0.15);
+        }
+
+        .community-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .community-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--dd-gray-900);
+        }
+
+        .community-desc {
+            font-size: 14px;
+            color: var(--dd-muted);
+            margin: 0;
+        }
+
+        /* Closing Section */
+        .closing-section {
+            text-align: center;
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 249, 250, 0.9));
+            border-radius: 24px;
+            margin: 80px 0;
+        }
+
+        .closing-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0 0 24px 0;
+            color: var(--dd-gray-900);
+        }
+
+        .closing-message {
+            font-size: 18px;
+            color: var(--dd-gray-700);
+            max-width: 600px;
+            margin: 0 auto 32px auto;
+            line-height: 1.7;
+        }
+
+        .signature {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dd-purple);
+            margin-top: 32px;
+        }
+
+        /* Floating Hearts Animation */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: var(--dd-pink);
+            animation: floatUp 8s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+
+        .heart:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .heart:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .heart:nth-child(3) { left: 30%; animation-delay: 2s; }
+        .heart:nth-child(4) { left: 40%; animation-delay: 3s; }
+        .heart:nth-child(5) { left: 50%; animation-delay: 4s; }
+        .heart:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .heart:nth-child(7) { left: 70%; animation-delay: 6s; }
+        .heart:nth-child(8) { left: 80%; animation-delay: 7s; }
+        .heart:nth-child(9) { left: 90%; animation-delay: 8s; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .hero-title {
+                font-size: 48px;
+            }
+
+            .hero-subtitle {
+                font-size: 20px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .thanks-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .thank-you-card {
+                padding: 24px;
+            }
+
+            .general-thanks {
+                padding: 32px 24px;
+            }
+
+            .community-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 16px;
+            }
+
+            .fake-money-container {
+                gap: 10px;
+            }
+
+            .fake-bill {
+                width: 100px;
+                height: 50px;
+            }
+
+            .bill-amount {
+                font-size: 14px;
+            }
+        }
+
+        /* Special Effects */
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--dd-yellow);
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Hearts Animation -->
+    <div class="floating-hearts">
+        <div class="heart">💙</div>
+        <div class="heart">💚</div>
+        <div class="heart">💜</div>
+        <div class="heart">🧡</div>
+        <div class="heart">💛</div>
+        <div class="heart">❤️</div>
+        <div class="heart">💙</div>
+        <div class="heart">💚</div>
+        <div class="heart">💜</div>
+    </div>
+
+    <!-- Money Rain Effect -->
+    <div class="money-rain" id="moneyRain">
+        <div class="money-symbol">💰</div>
+        <div class="money-symbol">💵</div>
+        <div class="money-symbol">💸</div>
+        <div class="money-symbol">🤑</div>
+        <div class="money-symbol">💎</div>
+        <div class="money-symbol">💰</div>
+        <div class="money-symbol">💵</div>
+        <div class="money-symbol">💸</div>
+        <div class="money-symbol">🤑</div>
+        <div class="money-symbol">💎</div>
+        <div class="money-symbol">💰</div>
+        <div class="money-symbol">💵</div>
+        <div class="money-symbol">💸</div>
+        <div class="money-symbol">🤑</div>
+        <div class="money-symbol">💎</div>
+        <div class="money-symbol">💰</div>
+        <div class="money-symbol">💵</div>
+        <div class="money-symbol">💸</div>
+        <div class="money-symbol">🤑</div>
+        <div class="money-symbol">💎</div>
+        <div class="money-symbol">💰</div>
+        <div class="money-symbol">💵</div>
+        <div class="money-symbol">💸</div>
+        <div class="money-symbol">🤑</div>
+        <div class="money-symbol">💎</div>
+        <div class="money-symbol">💰</div>
+        <div class="money-symbol">💵</div>
+        <div class="money-symbol">💸</div>
+        <div class="money-symbol">🤑</div>
+        <div class="money-symbol">💎</div>
+        <div class="money-symbol">💰</div>
+        <div class="money-symbol">💵</div>
+        <div class="money-symbol">💸</div>
+        <div class="money-symbol">🤑</div>
+        <div class="money-symbol">💎</div>
+        <div class="money-symbol">💰</div>
+        <div class="money-symbol">💵</div>
+        <div class="money-symbol">💸</div>
+        <div class="money-symbol">🤑</div>
+        <div class="money-symbol">💎</div>
+        <div class="money-symbol">💰</div>
+        <div class="money-symbol">💵</div>
+        <div class="money-symbol">💸</div>
+        <div class="money-symbol">🤑</div>
+        <div class="money-symbol">💎</div>
+    </div>
+
+    <!-- Navigation Header -->
+    <div class="main-nav-wrapper">
+        <nav class="main-nav">
+            <a href="http://0.0.0.0:8000/" class="nav-brand">
+                <img src="/static/images/datadog-logo.png" alt="Datadog" onerror="this.style.display='none'">
+                Notebook Generator
+            </a>
+            <ul class="nav-links">
+                <li><a href="http://0.0.0.0:8000/">Home</a></li>
+                <li><a href="http://0.0.0.0:8000/static/features.html">Features</a></li>
+                <li><a href="http://0.0.0.0:8000/static/presentation.html">Presentation</a></li>
+                <li><a href="http://0.0.0.0:8000/static/thanks.html">Thank You</a></li>
+                <li><a href="http://0.0.0.0:8000/docs">Documentation</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="gratitude-badge">🏆 Hackathon Success Story</div>
+                <h1 class="hero-title">Thank You!</h1>
+                <p class="hero-subtitle">This project wouldn't have been possible without incredible people</p>
+            </div>
+        </div>
+
+        <!-- Special Thanks Section -->
+        <div class="thanks-section">
+            <div class="section-header">
+                <h2 class="section-title">Our Amazing Team</h2>
+                <p class="section-subtitle">Special gratitude to the incredible individuals who made this hackathon project a reality</p>
+            </div>
+
+            <div class="thanks-grid">
+                <!-- Jett -->
+                <div class="thank-you-card jett">
+                    <div class="card-avatar jett">J</div>
+                    <h3 class="card-name">Jett ⚡</h3>
+                    <p class="card-role">Lightning-Fast Innovation Partner</p>
+                    <p class="card-message">
+                        Thank you for bringing the lightning-speed energy and cyberpunk inspiration to our project! 
+                        Your TypeRacer game and creative vision added that special spark that made our platform truly unique. 
+                        Your enthusiasm and innovative thinking were contagious!
+                    </p>
+                </div>
+
+                <!-- JM -->
+                <div class="thank-you-card jm">
+                    <div class="card-avatar jm">JM</div>
+                    <h3 class="card-name">JM 🚀</h3>
+                    <p class="card-role">Technical Architecture Guru & Money Magnet</p>
+                    <p class="card-message">
+                        Your technical expertise and architectural guidance were instrumental in building a robust, 
+                        scalable solution. Thank you for the countless hours of mentorship, code reviews, and 
+                        brilliant insights that elevated our project to the next level!
+                    </p>
+                    
+                    <!-- JM's Special Money Bonus -->
+                    <div class="money-bonus" onclick="triggerMoneyRain()">
+                        <div class="money-content">
+                            <h4 class="money-title">🎉 Special Bonus for JM! 🎉</h4>
+                            <div class="fake-money-container">
+                                <div class="fake-bill">
+                                    <div class="bill-amount">$1M</div>
+                                    <div class="bill-text">Hackathon Bucks</div>
+                                    <div class="bill-jm">JM</div>
+                                </div>
+                                <div class="fake-bill">
+                                    <div class="bill-amount">$500K</div>
+                                    <div class="bill-text">Code Coins</div>
+                                    <div class="bill-jm">JM</div>
+                                </div>
+                                <div class="fake-bill">
+                                    <div class="bill-amount">$2M</div>
+                                    <div class="bill-text">Debug Dollars</div>
+                                    <div class="bill-jm">JM</div>
+                                </div>
+                            </div>
+                            <p class="money-disclaimer">
+                                💰 <em>*Not redeemable for actual currency, but worth infinite gratitude!*</em> 💰<br>
+                                <strong style="font-size: 16px; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); animation: textGlow 2s ease-in-out infinite alternate;">
+                                    👆 CLICK ANYWHERE HERE TO MAKE IT RAIN MONEY! 🌧️💵💰
+                                </strong><br>
+                                <small style="opacity: 0.8; margin-top: 8px; display: block;">
+                                    (Click the bills, click the background, click anything! 💸)
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yvonne -->
+                <div class="thank-you-card yvonne">
+                    <div class="card-avatar yvonne">Y</div>
+                    <h3 class="card-name">Yvonne 🌟</h3>
+                    <p class="card-role">Strategic Vision & Support Champion</p>
+                    <p class="card-message">
+                        Your deep understanding of support engineering challenges and strategic vision shaped our 
+                        entire approach. Thank you for helping us focus on real-world impact and ensuring our 
+                        solution truly addresses the pain points that matter most!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- General Thanks Section -->
+        <div class="general-thanks">
+            <h2 class="general-thanks-title">To Our Entire Support Network</h2>
+            <p class="general-thanks-message">
+                This hackathon project was made possible by an incredible community of supporters, mentors, and collaborators. 
+                Every conversation, piece of feedback, and moment of encouragement helped shape what we've built today.
+            </p>
+
+            <div class="community-grid">
+                <div class="community-item">
+                    <div class="community-icon">👨‍💻</div>
+                    <h4 class="community-title">Fellow Engineers</h4>
+                    <p class="community-desc">For technical discussions and code reviews</p>
+                </div>
+
+                <div class="community-item">
+                    <div class="community-icon">🎯</div>
+                    <h4 class="community-title">Product Managers</h4>
+                    <p class="community-desc">For strategic guidance and user insights</p>
+                </div>
+
+                <div class="community-item">
+                    <div class="community-icon">🛠️</div>
+                    <h4 class="community-title">Support Team</h4>
+                    <p class="community-desc">For sharing real-world use cases and pain points</p>
+                </div>
+
+                <div class="community-item">
+                    <div class="community-icon">🌟</div>
+                    <h4 class="community-title">Design Team</h4>
+                    <p class="community-desc">For UX inspiration and design feedback</p>
+                </div>
+
+                <div class="community-item">
+                    <div class="community-icon">📊</div>
+                    <h4 class="community-title">Data Scientists</h4>
+                    <p class="community-desc">For AI/ML insights and optimization tips</p>
+                </div>
+
+                <div class="community-item">
+                    <div class="community-icon">🤝</div>
+                    <h4 class="community-title">Leadership</h4>
+                    <p class="community-desc">For believing in our vision and supporting innovation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Closing Section -->
+        <div class="closing-section">
+            <h2 class="closing-title">Building the Future Together</h2>
+            <p class="closing-message">
+                This hackathon taught us that the best innovations come from collaboration, creativity, and a shared passion 
+                for solving real problems. We're excited to continue this journey and see where our AI-powered support 
+                visualization platform can take us next!
+            </p>
+            <div class="signature">
+                With gratitude and excitement,<br>
+                <strong>The Datadog Notebook Generator Team</strong> 💙
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Money Rain Effect
+        function triggerMoneyRain() {
+            const moneyRain = document.getElementById('moneyRain');
+            moneyRain.style.display = 'block';
+            
+            // Position money symbols randomly with different sizes and animations
+            const symbols = moneyRain.querySelectorAll('.money-symbol');
+            const sizeClasses = ['small', '', 'large']; // small, normal, large
+            const animationTypes = ['', 'bounce']; // normal fall or bouncy
+            
+            symbols.forEach((symbol, index) => {
+                // Random horizontal position
+                symbol.style.left = Math.random() * 100 + '%';
+                
+                // Random animation delay spread over 3 seconds
+                symbol.style.animationDelay = (Math.random() * 3) + 's';
+                
+                // Random size
+                const sizeClass = sizeClasses[Math.floor(Math.random() * sizeClasses.length)];
+                symbol.className = 'money-symbol ' + sizeClass;
+                
+                // Random animation type
+                if (Math.random() > 0.7) { // 30% chance for bounce animation
+                    symbol.classList.add('bounce');
+                }
+                
+                // Random duration between 3-6 seconds
+                const duration = 3 + Math.random() * 3;
+                symbol.style.animationDuration = duration + 's';
+            });
+            
+            // Create additional money burst effect at click location
+            createMoneyBurst();
+            
+            // Hide after animation (longer duration)
+            setTimeout(() => {
+                moneyRain.style.display = 'none';
+                // Reset all classes
+                symbols.forEach(symbol => {
+                    symbol.className = 'money-symbol';
+                });
+            }, 7000);
+            
+            // Add celebration messages
+            console.log('🎉💰 MEGA CHA-CHING! Epic money rain for JM! 💰🎉');
+            console.log('💸 Raining $3.5M in fake currency! 💸');
+        }
+        
+        // Create money burst effect
+        function createMoneyBurst() {
+            const burstContainer = document.createElement('div');
+            burstContainer.style.position = 'fixed';
+            burstContainer.style.top = '0';
+            burstContainer.style.left = '0';
+            burstContainer.style.width = '100%';
+            burstContainer.style.height = '100%';
+            burstContainer.style.pointerEvents = 'none';
+            burstContainer.style.zIndex = '1001';
+            document.body.appendChild(burstContainer);
+            
+            // Create money symbols that burst from center
+            const burstSymbols = ['💰', '💵', '💸', '🤑', '💎', '🏆', '⭐', '✨'];
+            for (let i = 0; i < 30; i++) {
+                const symbol = document.createElement('div');
+                symbol.textContent = burstSymbols[Math.floor(Math.random() * burstSymbols.length)];
+                symbol.style.position = 'absolute';
+                symbol.style.left = '50%';
+                symbol.style.top = '30%';
+                symbol.style.fontSize = (20 + Math.random() * 40) + 'px';
+                symbol.style.pointerEvents = 'none';
+                symbol.style.textShadow = '2px 2px 4px rgba(0,0,0,0.3)';
+                burstContainer.appendChild(symbol);
+                
+                const angle = (i / 30) * Math.PI * 2;
+                const velocity = 150 + Math.random() * 200;
+                const gravity = 0.5 + Math.random() * 0.5;
+                
+                symbol.animate([
+                    { 
+                        transform: 'translate(-50%, -50%) scale(0) rotate(0deg)',
+                        opacity: 0
+                    },
+                    { 
+                        transform: 'translate(-50%, -50%) scale(1.2) rotate(180deg)',
+                        opacity: 1,
+                        offset: 0.1
+                    },
+                    { 
+                        transform: `translate(${-50 + Math.cos(angle) * velocity}%, ${-50 + Math.sin(angle) * velocity + gravity * 100}%) scale(0.8) rotate(720deg)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: 2000 + Math.random() * 1000,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                }).onfinish = () => symbol.remove();
+            }
+            
+            // Remove container after animations
+            setTimeout(() => {
+                burstContainer.remove();
+            }, 4000);
+        }
+
+        // Add click celebration effect for JM's card
+        document.querySelector('.thank-you-card.jm').addEventListener('click', function() {
+            if (!event.target.closest('.money-bonus')) {
+                triggerMoneyRain();
+            }
+        });
+
+        // Add sparkle effects
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.style.position = 'absolute';
+            sparkle.style.width = '4px';
+            sparkle.style.height = '4px';
+            sparkle.style.background = '#ffd700';
+            sparkle.style.borderRadius = '50%';
+            sparkle.style.left = Math.random() * 100 + '%';
+            sparkle.style.top = Math.random() * 100 + '%';
+            sparkle.style.animation = 'sparkle 2s ease-in-out';
+            sparkle.style.pointerEvents = 'none';
+            document.body.appendChild(sparkle);
+
+            setTimeout(() => {
+                sparkle.remove();
+            }, 2000);
+        }
+
+        // Create sparkles periodically
+        setInterval(createSparkle, 800);
+
+        // Add money bill click effects
+        document.querySelectorAll('.fake-bill').forEach(bill => {
+            bill.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.style.transform = 'scale(1.3) rotate(720deg)';
+                this.style.boxShadow = '0 0 30px var(--money-gold), 0 0 60px var(--money-green)';
+                
+                setTimeout(() => {
+                    this.style.transform = '';
+                    this.style.boxShadow = '0 4px 16px rgba(34, 139, 34, 0.4)';
+                }, 800);
+                
+                // Create bigger money burst
+                const symbols = ['💰', '💵', '💸', '💎', '🤑'];
+                for (let i = 0; i < 15; i++) {
+                    const mini = document.createElement('div');
+                    mini.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                    mini.style.position = 'absolute';
+                    mini.style.left = '50%';
+                    mini.style.top = '50%';
+                    mini.style.pointerEvents = 'none';
+                    mini.style.zIndex = '1000';
+                    mini.style.fontSize = (16 + Math.random() * 20) + 'px';
+                    mini.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
+                    
+                    this.appendChild(mini);
+                    
+                    const angle = (i / 15) * Math.PI * 2;
+                    const distance = 60 + Math.random() * 40;
+                    mini.animate([
+                        { 
+                            transform: 'translate(-50%, -50%) scale(0) rotate(0deg)', 
+                            opacity: 0 
+                        },
+                        { 
+                            transform: 'translate(-50%, -50%) scale(1.2) rotate(180deg)', 
+                            opacity: 1,
+                            offset: 0.2
+                        },
+                        { 
+                            transform: `translate(${-50 + Math.cos(angle) * distance}%, ${-50 + Math.sin(angle) * distance}%) scale(0.3) rotate(720deg)`, 
+                            opacity: 0 
+                        }
+                    ], {
+                        duration: 1200 + Math.random() * 600,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    }).onfinish = () => mini.remove();
+                }
+                
+                // Trigger a mini money rain too!
+                if (Math.random() > 0.5) {
+                    setTimeout(() => triggerMoneyRain(), 300);
+                }
+            });
+        });
+
+        // CSS for sparkle animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0%, 100% { opacity: 0; transform: scale(0); }
+                50% { opacity: 1; transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 
