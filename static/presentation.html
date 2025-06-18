@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en-US" data-base-url="http://0.0.0.0:8000/" data-type="presentation" style="opacity:1">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Hackathon Presentation | Datadog Notebook Generator</title>
+    <link rel="canonical" href="http://0.0.0.0:8000/static/presentation.html">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/png" href="/static/images/datadog-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description" content="Hackathon presentation materials for the AI-Powered Support Visualization project">
+    <meta name="theme-color" content="#632ca6">
+    
+    <style>
+        :root {
+            --dd-purple: #632ca6;
+            --dd-purple-light: #774aa4;
+            --dd-purple-dark: #4f2385;
+            --dd-blue: #3d95ff;
+            --dd-green: #5cb85c;
+            --dd-orange: #f0ad4e;
+            --dd-red: #d9534f;
+            --dd-gray-50: #f8f9fa;
+            --dd-gray-100: #f1f3f4;
+            --dd-gray-200: #e9ecef;
+            --dd-gray-300: #dee2e6;
+            --dd-gray-400: #ced4da;
+            --dd-gray-500: #adb5bd;
+            --dd-gray-600: #6c757d;
+            --dd-gray-700: #495057;
+            --dd-gray-800: #343a40;
+            --dd-gray-900: #212529;
+            --dd-border-color: #dee2e6;
+            --dd-text-color: #212529;
+            --dd-muted: #6c757d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            color: var(--dd-text-color);
+            margin: 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            font-size: 16px;
+            font-weight: 400;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .main-nav-wrapper {
+            background: #fff;
+            border-bottom: 1px solid var(--dd-border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .main-nav {
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dd-text-color);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .nav-brand img {
+            height: 32px;
+            margin-right: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: var(--dd-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--dd-purple);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding: 48px 0;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue));
+            border-radius: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .page-header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0 0 16px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header .subtitle {
+            font-size: 20px;
+            margin: 0;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header .project-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Content Sections */
+        .content-section {
+            margin-bottom: 48px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--dd-border-color);
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 16px;
+            color: white;
+        }
+
+        .section-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--dd-gray-900);
+        }
+
+        /* Link Cards */
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .link-card {
+            background: white;
+            border: 1px solid var(--dd-border-color);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue));
+        }
+
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(99, 44, 166, 0.15);
+            border-color: var(--dd-purple);
+        }
+
+        .link-card.primary-link {
+            border: 2px solid var(--dd-purple);
+            background: linear-gradient(135deg, rgba(99, 44, 166, 0.05), rgba(61, 149, 255, 0.05));
+        }
+
+        .link-card.primary-link::before {
+            height: 6px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-right: 12px;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dd-gray-900);
+            margin: 0;
+        }
+
+        .card-description {
+            color: var(--dd-gray-600);
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--dd-purple), var(--dd-blue));
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(99, 44, 166, 0.2);
+        }
+
+        .card-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(99, 44, 166, 0.3);
+            color: white;
+        }
+
+        .card-link::after {
+            content: '→';
+            margin-left: 8px;
+            font-weight: 700;
+        }
+
+        .card-url {
+            background: var(--dd-gray-50);
+            border: 1px solid var(--dd-border-color);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            color: var(--dd-gray-700);
+            word-break: break-all;
+            margin-top: 12px;
+        }
+
+        /* Ticket Cards Special Styling */
+        .ticket-card {
+            border-left: 4px solid var(--dd-orange);
+        }
+
+        .ticket-card .card-icon {
+            background: linear-gradient(135deg, var(--dd-orange), var(--dd-red));
+        }
+
+        .ticket-card .card-link {
+            background: linear-gradient(135deg, var(--dd-orange), var(--dd-red));
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border: 1px solid var(--dd-border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .quick-actions h3 {
+            margin: 0 0 16px 0;
+            color: var(--dd-gray-900);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            background: var(--dd-gray-100);
+            color: var(--dd-gray-700);
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--dd-border-color);
+        }
+
+        .action-btn:hover {
+            background: var(--dd-gray-200);
+            color: var(--dd-gray-900);
+            transform: translateY(-1px);
+        }
+
+        .action-btn::before {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .action-btn.home::before { content: '🏠'; }
+        .action-btn.features::before { content: '🎯'; }
+        .action-btn.docs::before { content: '📚'; }
+        .action-btn.demo::before { content: '🚀'; }
+
+        /* Status Indicators */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .status-card {
+            background: white;
+            border: 1px solid var(--dd-border-color);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .status-card.ready {
+            border-color: var(--dd-green);
+            background: linear-gradient(135deg, rgba(92, 184, 92, 0.1), rgba(92, 184, 92, 0.05));
+        }
+
+        .status-indicator {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .status-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dd-gray-700);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .page-header h1 {
+                font-size: 32px;
+            }
+
+            .page-header .subtitle {
+                font-size: 16px;
+            }
+
+            .link-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .section-header h2 {
+                font-size: 24px;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <div class="main-nav-wrapper">
+        <nav class="main-nav">
+            <a href="http://0.0.0.0:8000/" class="nav-brand">
+                <img src="/static/images/datadog-logo.png" alt="Datadog" onerror="this.style.display='none'">
+                Notebook Generator
+            </a>
+            <ul class="nav-links">
+                <li><a href="http://0.0.0.0:8000/">Home</a></li>
+                <li><a href="http://0.0.0.0:8000/static/features.html">Features</a></li>
+                <li><a href="http://0.0.0.0:8000/docs">Documentation</a></li>
+                <li><a href="http://0.0.0.0:8000/static/presentation.html">Presentation</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="project-tag">🏆 Hackathon Project</div>
+            <h1>AI-Powered Support Visualization</h1>
+            <p class="subtitle">Transforming Support Engineering with Intelligent Notebook & Dashboard Generation</p>
+        </div>
+
+        <!-- Presentation Status -->
+        <div class="content-section">
+            <div class="section-header">
+                <div class="section-icon">📊</div>
+                <h2>Presentation Status</h2>
+            </div>
+            
+            <div class="status-grid">
+                <div class="status-card ready">
+                    <div class="status-indicator">✅</div>
+                    <div class="status-label">Slides Ready</div>
+                </div>
+                <div class="status-card ready">
+                    <div class="status-indicator">🎯</div>
+                    <div class="status-label">Demo Prepared</div>
+                </div>
+                <div class="status-card ready">
+                    <div class="status-indicator">📋</div>
+                    <div class="status-label">Use Cases Ready</div>
+                </div>
+                <div class="status-card ready">
+                    <div class="status-indicator">🚀</div>
+                    <div class="status-label">Platform Live</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Presentation Link -->
+        <div class="content-section">
+            <div class="section-header">
+                <div class="section-icon">🎭</div>
+                <h2>Presentation Materials</h2>
+            </div>
+            
+            <div class="link-grid">
+                <div class="link-card primary-link">
+                    <div class="card-header">
+                        <div class="card-icon">📽️</div>
+                        <h3 class="card-title">Main Presentation Slides</h3>
+                    </div>
+                    <div class="card-description">
+                        Complete hackathon presentation covering problem statement, solution architecture, live demos, and future roadmap.
+                    </div>
+                    <a href="https://docs.google.com/presentation/d/1SekT2uq2_DajVJwrLEPTZw0g-7gPM0b8d3AjS39LVIc/edit?slide=id.g36939edf97f_0_0#slide=id.g36939edf97f_0_0" 
+                       target="_blank" 
+                       class="card-link">Open Presentation</a>
+                    <div class="card-url">
+                        https://docs.google.com/presentation/d/1SekT2uq2_DajVJwrLEPTZw0g-7gPM0b8d3AjS39LVIc/edit
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real Use Cases -->
+        <div class="content-section">
+            <div class="section-header">
+                <div class="section-icon">🎫</div>
+                <h2>Real Support Tickets</h2>
+            </div>
+            <p style="color: var(--dd-gray-600); margin-bottom: 24px;">
+                These actual Datadog support tickets demonstrate the real-world problems our solution addresses. 
+                Each ticket represents hours of manual work that can now be automated.
+            </p>
+            
+            <div class="link-grid">
+                <div class="link-card ticket-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <h3 class="card-title">Ticket #1980122</h3>
+                    </div>
+                    <div class="card-description">
+                        <strong>Use Case:</strong> Metrics discrepancy due to different time/space aggregation and rollup functions. 
+                        Customer confused about why dashboard and alerts show different values.
+                    </div>
+                    <a href="https://datadog.zendesk.com/agent/tickets/1980122" 
+                       target="_blank" 
+                       class="card-link">View Ticket</a>
+                    <div class="card-url">
+                        https://datadog.zendesk.com/agent/tickets/1980122
+                    </div>
+                </div>
+
+                <div class="link-card ticket-card">
+                    <div class="card-header">
+                        <div class="card-icon">📈</div>
+                        <h3 class="card-title">Ticket #1947303</h3>
+                    </div>
+                    <div class="card-description">
+                        <strong>Use Case:</strong> Customer needs guidance on dashboard visualization best practices. 
+                        Requires step-by-step instructions for complex metric queries.
+                    </div>
+                    <a href="https://datadog.zendesk.com/agent/tickets/1947303" 
+                       target="_blank" 
+                       class="card-link">View Ticket</a>
+                    <div class="card-url">
+                        https://datadog.zendesk.com/agent/tickets/1947303
+                    </div>
+                </div>
+
+                <div class="link-card ticket-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔍</div>
+                        <h3 class="card-title">Ticket #1976328</h3>
+                    </div>
+                    <div class="card-description">
+                        <strong>Use Case:</strong> Complex monitoring scenario requiring custom visualization. 
+                        Non-technical user needs template and guidance for implementation.
+                    </div>
+                    <a href="https://datadog.zendesk.com/agent/tickets/1976328" 
+                       target="_blank" 
+                       class="card-link">View Ticket</a>
+                    <div class="card-url">
+                        https://datadog.zendesk.com/agent/tickets/1976328
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3>🚀 Quick Demo Access</h3>
+            <div class="action-buttons">
+                <a href="http://0.0.0.0:8000/" class="action-btn home">Live Platform</a>
+                <a href="http://0.0.0.0:8000/static/features.html" class="action-btn features">Features Guide</a>
+                <a href="http://0.0.0.0:8000/docs" class="action-btn docs">API Documentation</a>
+                <a href="http://0.0.0.0:8000/generate" class="action-btn demo">Start Demo</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add click tracking for presentation links
+        document.querySelectorAll('.card-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const cardTitle = this.closest('.link-card').querySelector('.card-title').textContent;
+                console.log(`Opening: ${cardTitle}`);
+                
+                // Add visual feedback
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Add keyboard shortcuts for quick navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        window.open('https://docs.google.com/presentation/d/1SekT2uq2_DajVJwrLEPTZw0g-7gPM0b8d3AjS39LVIc/edit?slide=id.g36939edf97f_0_0#slide=id.g36939edf97f_0_0', '_blank');
+                        break;
+                    case 'h':
+                        e.preventDefault();
+                        window.location.href = 'http://0.0.0.0:8000/';
+                        break;
+                }
+            }
+        });
+
+        // Status animation
+        document.querySelectorAll('.status-card').forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            }, index * 200);
+        });
+    </script>
+</body>
+</html> 
